@@ -1,1 +1,1 @@
-In this project, I spawned a child which would generate a random number between 0-100, keep track of how many numbers are generated less than 25 and greater than 75, and stop when a number between 48-51 is genereted.
+In this project, I created a program to spawn a child to generate a random number between 0-100, keep track of how many numbers are generated less than 25 and greater than 75, and stop when a number between 48-51 is genereted.
