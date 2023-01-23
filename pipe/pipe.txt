@@ -1,0 +1,1 @@
+In this project, I created a program that used a pipe to take in the user's input and output it back to them.
