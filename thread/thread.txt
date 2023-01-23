@@ -1,0 +1,2 @@
+In this project, I created a program to spawn two thread that output the numbers from 0-60.
+The first thread output the even numbers, while the second thred output the odd numbers.
