@@ -1,0 +1,1 @@
+In this project, I created a program that used a timer to read an item from the file I created in the createFile project every second.
