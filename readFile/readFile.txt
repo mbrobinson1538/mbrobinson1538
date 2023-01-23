@@ -1,1 +1,1 @@
-In this project, I created two programs to read the file I created with the createFile project.
+In this project, I created a programs to read the file I created with the createFile project.
