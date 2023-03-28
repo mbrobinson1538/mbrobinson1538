@@ -1,0 +1,1 @@
+In this program, I used threads to count lines from files.
