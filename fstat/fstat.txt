@@ -1,0 +1,1 @@
+In this program, I used fstat and getrusage to ouput information about different files.
