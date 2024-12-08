@@ -1,0 +1,1 @@
+My third data science assignment included working some exercises from the textbook and creating my own exercise.  For my exercise, I looked at the most college-educated counties in five midwestern states: Illinois, Indiana, Michigan, Ohio, and Wisconsin.  This was all done using R in RStudio.
