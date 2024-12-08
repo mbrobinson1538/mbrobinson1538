@@ -1,0 +1,498 @@
+---
+title: "ds2"
+author: "Matthew Robinson"
+output: word_document
+format: html
+editor: visual
+editor_options: 
+  chunk_output_type: inline
+---
+
+```{r}
+library(ggplot2)
+library(tidyverse)
+library(nycflights13)
+```
+
+# Section 3.7.1
+
+# Exercise 2
+
+What does geom_col() do?
+
+```{r}
+ggplot(data = diamonds) + geom_col(mapping = aes(x = cut, y = depth))
+```
+
+The geom_bar() function creates a bar chart with the specified x and y values.\
+How is it different to geom_bar()?
+
+```{r}
+ggplot(data = diamonds) + geom_bar(mapping = aes(x = cut))
+```
+
+The geom_bar function does not require a y value and defaults to count.
+
+# Exercise 5
+
+In our proportion bar chart, we need to set group = 1. Why? In other words what is the problem with these two graphs?
+
+```{r}
+ggplot(data = diamonds) + geom_bar(mapping = aes(x = cut, y = after_stat(prop)))
+```
+
+```{r}
+ggplot(data = diamonds) + geom_bar(mapping = aes(x = cut, fill = color, y = after_stat(prop)))
+```
+
+The above graphs are are being graphed based on count as opposed to proportion.
+
+```{r}
+ggplot(data = diamonds) + geom_bar(mapping = aes(x = cut, y = after_stat(prop), group = 1))
+```
+
+For the first graph, you must add the "group = 1" command as shown above to get the correct graph.
+
+```{r}
+ggplot(data = diamonds) + geom_bar(mapping = aes(x = cut, fill = color, y = after_stat(prop), group = color))
+```
+
+For the second graph, you must add the "group = color" command as shown above to get the correct graph.
+
+# Section 3.8.1
+
+# Exercise 1
+
+What is the problem with this plot?
+
+```{r}
+ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) + geom_point()
+```
+
+Many of the points on the above plot overlap each other which makes it hard to see where most of the data is.\
+How could you improve it?
+
+```{r}
+ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) + geom_jitter()
+```
+
+This can be improved by using geom_jitter instead of geom_point as shown above.
+
+# Exercise 3
+
+Compare and contrast geom_jitter() with geom_count().
+
+```{r}
+ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) + geom_jitter()
+```
+
+The geom_jitter function scatters the points, so they do not overlap.
+
+```{r}
+ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) + geom_count()
+```
+
+The geom_count function makes the points bigger when there are multiple points in the same place.
+
+# Section 3.9.1
+
+# Exercise 1
+
+Turn a stacked bar chart into a pie chart using coord_polar().
+
+```{r}
+ggplot(data = diamonds) + geom_bar(mapping = aes(x = cut, fill = cut), show.legend = FALSE, width = 1) + theme(aspect.ratio = 1) + labs(x = NULL, y = NULL) + coord_flip()
+```
+
+The coord_flip() command is used to create a stacked bar chart.
+
+```{r}
+ggplot(data = diamonds) + geom_bar(mapping = aes(x = cut, fill = cut), show.legend = FALSE, width = 1) + theme(aspect.ratio = 1) + labs(x = NULL, y = NULL) + coord_polar()
+```
+
+The coord_polar command is used to create a pie chart.
+
+# Exercise 4
+
+What does the plot below tell you about the relationship between city and highway mpg?
+
+```{r}
+ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) + geom_point() + geom_abline() + coord_fixed()
+```
+
+Highway mpg is generally better than city mpg.\
+Why is coord_fixed() important?
+
+```{r}
+ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) + geom_point() + geom_abline()
+```
+
+The coord_fixed() function keeps ensures that x and y values are the same distance apart on each axis.\
+What does geom_abline() do?
+
+```{r}
+ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) + geom_point() + coord_fixed()
+```
+
+The geom_abline() function adds a line that shows the trend of the data.
+
+# Exercise 5.2.4
+
+# Exercise 1
+
+Find all flights that had an arrival delay of two or more hours.
+
+```{r}
+filter(flights, arr_delay >= 120)
+```
+
+Find all flights that flew to Houston (IAH or HOU).
+
+```{r}
+filter(flights, dest == "IAH" | dest == "HOU")
+```
+
+Find all flights that were operated by United, American, or Delta.
+
+```{r}
+filter(flights, carrier == "UA" | carrier == "AA" | carrier == "DL")
+```
+
+Find all flights that departed in summer (July, August, and September).
+
+```{r}
+filter(flights, month == 7 | month == 8 | month == 9)
+```
+
+Find all flights that arrived more than two hours late, but didn't leave late.
+
+```{r}
+filter(flights, arr_delay > 120 & dep_delay <= 0)
+```
+
+Find all flights that were delayed by at least an hour, but made up over 30 minutes in flight.
+
+```{r}
+filter(flights, dep_delay >= 60 & arr_delay <= dep_delay - 30)
+```
+
+Find all flights that departed between midnight and 6am (inclusive).
+
+```{r}
+filter(flights, dep_time <= 600)
+```
+
+# Exercise 3
+
+How many flights have a missing dep_time? What other variables are missing? What might these rows represent?
+
+```{r}
+filter(flights, is.na(dep_time))
+```
+
+8,255 flights do not have a departure time.  These flights are also missing departure delays and arrival times.  Since these flights never departed, they were never delayed and never arrived.
+
+# Section 5.3.1
+
+# Exercise 2
+
+Sort flights to find the most delayed flights.
+
+```{r}
+arrange(flights, desc(dep_delay))
+```
+
+Find the flights that left earliest.
+
+```{r}
+arrange(flights, dep_delay)
+```
+
+# Exercise 4
+
+Which flights traveled the farthest?
+
+```{r}
+arrange(flights, desc(distance))
+```
+
+Which traveled the shortest?
+
+```{r}
+arrange(flights, distance)
+```
+
+# Section 5.4.1
+
+# Exercise 2
+
+What happens if you include the name of a variable multiple times in a select() call?
+
+```{r}
+select(flights, carrier)
+```
+
+This is the result of the select statement for flights on carrier.
+
+```{r}
+select(flights, carrier, carrier)
+```
+
+As shown above, including the same variable multiple times does not affect the results.
+
+# Exercise 3
+
+What does the any_of() function do? Why might it be helpful in conjunction with this vector?
+
+```{r}
+vars <- c("year", "month", "day", "dep_delay", "arr_delay")
+```
+
+The any_of() function allows you to specify all the variables in a vector.
+
+```{r}
+select(flights, any_of(vars))
+```
+
+When the any_of() function is applied to the previous vector in a select statement, it gives the results shown above without needing to type everything out again.
+
+# Section 5.5.2
+
+# Exercise 1
+
+Currently dep_time and sched_dep_time are convenient to look at, but hard to compute with because they’re not really continuous numbers. Convert them to a more convenient representation of number of minutes since midnight.
+
+```{r}
+flights1 <- flights
+transmute(flights1, dep_time = 60 * dep_time %/% 100 + dep_time %% 100, sched_dep_time = 60 * sched_dep_time %/% 100 + sched_dep_time %% 100)
+```
+
+The above formula can be used to convert dep_time and sched_dep_time to minutes.
+
+# Exercise 3
+
+Compare dep_time, sched_dep_time, and dep_delay. How would you expect those three numbers to be related?
+
+```{r}
+flights1 <- flights
+transmute(flights1, dep_time, sched_dep_time, dep_delay, dep_time - sched_dep_time)
+```
+
+You would expect dep_delay to always match dep_time - sched_dep_time.  However, this is not the case because dep_time and sched_dep_time are not listed in minutes.
+
+```{r}
+flights1 <- flights
+transmute(flights1, dep_time = 60 * dep_time %/% 100 + dep_time %% 100, sched_dep_time = 60 * sched_dep_time %/% 100 + sched_dep_time %% 100, dep_delay, dep_time - sched_dep_time)
+```
+
+The above formula fixes this issue by converting dep_time and sched_dep_time to minutes.
+
+# Section 5.6.7
+
+# Exercise 3
+
+Our definition of cancelled flights (is.na(dep_delay) | is.na(arr_delay) ) is slightly suboptimal. Why? Which is the most important column?
+
+```{r}
+reframe(flights, is.na(dep_delay) | is.na(arr_delay))
+```
+
+It is unnecessary to check if both dep_delay and arr_delay are null because if dep_delay is null then arr_delay will also be null since a flight that never departed cannot arrive.
+
+```{r}
+reframe(flights, is.na(dep_delay))
+```
+
+It is only necessary to check if dep_delay is null as this will give the same result.
+
+# Exercise 6
+
+What does the sort argument to count() do. When might you use it?
+
+```{r}
+flights %>% count(dest)
+```
+
+Count will default to sorting by alphabetical order.
+
+```{r}
+flights %>% count(dest, sort = TRUE)
+```
+
+After adding the "sort = TRUE" argument, count will sort in numerical order.  This is useful if you want to see what the most common occurrences are.
+
+# Section 5.7.1
+
+# Exercise 2
+
+Which plane (tailnum) has the worst on-time record?
+
+```{r}
+flights %>% filter(arr_delay > 0) %>% count(tailnum, sort = TRUE)
+```
+
+The plane with tailnum N725MQ has the worst on-time record.
+
+# Exercise 3
+
+What time of day should you fly if you want to avoid delays as much as possible?
+
+```{r}
+flights %>% filter(dep_delay < 0) %>% count(sched_dep_time, sort = TRUE)
+```
+
+You should fly at 6am if you want to avoid delays as much as possible.
+
+# Midwest Demographics
+
+This data set contains data on the demographics of each county in five midwestern states: Illinois, Indiana, Michigan, Ohio, and Wisconsin.  The following table shows the top ten most populous counties in these states along with what state they are in, their population, and whether or not they are in a metropolitan area.
+
+```{r}
+select(arrange(midwest, desc(poptotal)), county, state, poptotal, inmetro)
+```
+
+When looking at this plot, it is clear that the most populated and most densely populated counties are all in metropolitan areas. This makes sense because metropolitan areas are centered around large cities with large populations. If a county is not close enough to one of these cities to be in a metropolitan area, it will probably not have a large population.  To get a closer look at this, the following table shows these same counties along with their county seat and what metropolitan and combined statistical areas they are in.
+
+| County    | County Seat  | Metro Area   | CSA          |
+|-----------|--------------|--------------|--------------|
+| Cook      | Chicago      | Chicago      | Chicago      |
+| Wayne     | Detroit      | Detroit      | Detroit      |
+| Cuyahoga  | Cleveland    | Cleveland    | Cleveland    |
+| Oakland   | Pontiac      | Detroit      | Detroit      |
+| Franklin  | Columbus     | Columbus     | Columbus     |
+| Milwaukee | Milwaukee    | Milwaukee    | Milwaukee    |
+| Hamilton  | Cincinnati   | Cincinnati   | Cincinnati   |
+| Marion    | Indianapolis | Indianapolis | Indianapolis |
+| Du Page   | Wheaton      | Chicago      | Chicago      |
+| Macomb    | Mt. Clemens  | Detroit      | Detroit      |
+
+As shown in the above table, half of the ten most populous counties in these states fall into either the Chicago or Detroit Metropolitan Areas.  This makes sense as these are the two most populous metropolitan areas in the region.  However, the other half of these counties each falls into a different metropolitan area.  To get a closer look at this divide, we will look at each of these five states individually.
+
+# Illinois
+
+```{r}
+select(arrange(filter(midwest, state == "IL"), desc(poptotal)), county, poptotal, inmetro)
+```
+
+As shown in the above table, the ten most populous counties in Illinois are all in a metropolitan area.  A breakdown of these ten counties can be seen in the following table.
+
+| County    | County Seat  | Metro Area | CSA       |
+|-----------|--------------|------------|-----------|
+| Cook      | Chicago      | Chicago    | Chicago   |
+| Du Page   | Wheaton      | Chicago    | Chicago   |
+| Lake      | Waukegan     | Chicago    | Chicago   |
+| Will      | Joliet       | Chicago    | Chicago   |
+| Kane      | Geneva       | Chicago    | Chicago   |
+| St. Clair | Belleville   | St. Louis  | St. Louis |
+| Winnebago | Rockford     | Rockford   | Rockford  |
+| Madison   | Edwardsville | St. Louis  | St. Louis |
+| McHenry   | Woodstock    | Chicago    | Chicago   |
+| Peoria    | Peoria       | Peoria     | Peoria    |
+
+As shown in the above table, six of the ten most populous counties in Illinois, including all of the top five, are a part of the Chicago Metropolitan Area.  These six counties, along with three more in other states, make Chicago the most common metropolitan area among the fifty counties listed.  Interestingly, two of the top ten most populous counties in Illinois are a part of the St. Louis Metropolitan Area.  These are the only two counties in the fifty counties listed to be a part of a metropolitan area anchored outside of these five states.  This makes sense because St. Louis borders Illinois and is larger than every metropolitan area in the region besides the previously mentioned Chicago and Detroit Metropolitan Areas.
+
+![Illinois Counties](illinois2.png)
+
+# Indiana
+
+```{r}
+select(arrange(filter(midwest, state == "IN"), desc(poptotal)), county, poptotal, inmetro)
+```
+
+As shown in the above table, the ten most populous counties in Indiana are all in a metropolitan area.  A breakdown of these ten counties can be seen in the following table.
+
+| County      | County Seat  | Metro Area   | CSA          |
+|-------------|--------------|--------------|--------------|
+| Marion      | Indianapolis | Indianapolis | Indianapolis |
+| Lake        | Crown Point  | Chicago      | Chicago      |
+| Allen       | Fort Wayne   | Fort Wayne   | Fort Wayne   |
+| St. Joseph  | South Bend   | South Bend   | South Bend   |
+| Vanderburgh | Evansville   | Evansville   | Evansville   |
+| Elkhart     | Goshen       | Elkhart      | South Bend   |
+| Madison     | Anderson     | Indianapolis | Indianapolis |
+| Tippecanoe  | Lafayette    | Lafayette    | Lafayette    |
+| Porter      | Valparaiso   | Chicago      | Chicago      |
+| Delaware    | Muncie       | Muncie       | Indianapolis |
+
+As shown in the table above, two of the ten most populous counties in Indiana are a part of the Indianapolis Metropolitan Area with a third being included in the Indianapolis Combined Statistical Area.  This makes sense as Indianapolis is the capital and largest city in Indiana.  The Chicago Metropolitan Area also includes two of the ten most populous counties in Indiana despite being anchored in a different state.  Although none of the other counties share a metropolitan area, St. Joseph and Elkhart counties do share the South Bend Combined Statistical Area.
+
+![Indiana Counties](indiana2.png)
+
+# Michigan
+
+```{r}
+select(arrange(filter(midwest, state == "MI"), desc(poptotal)), county, poptotal, inmetro)
+```
+
+As shown in the above table, the ten most populous counties in Michigan are all in a metropolitan area.  A breakdown of these ten counties can be seen in the following table.
+
+| County    | County Seat  | Metro Area   | CSA          |
+|-----------|--------------|--------------|--------------|
+| Wayne     | Detroit      | Detroit      | Detroit      |
+| Oakland   | Pontiac      | Detroit      | Detroit      |
+| Macomb    | Mt. Clemens  | Detroit      | Detroit      |
+| Kent      | Grand Rapids | Grand Rapids | Grand Rapids |
+| Genesee   | Flint        | Flint        | Detroit      |
+| Washtenaw | Ann Arbor    | Ann Arbor    | Detroit      |
+| Ingham    | Mason        | Lansing      | Lansing      |
+| Kalamazoo | Kalamazoo    | Kalamazoo    | Kalamazoo    |
+| Saginaw   | Saginaw      | Saginaw      | Saginaw      |
+| Ottawa    | Grand Haven  | Grand Rapids | Grand Rapids |
+
+As shown in the table above, the top three most populous counties in Michigan are a part of the Detroit Metropolitan Area with two more being included in the Detroit Metropolitan Area.  This makes sense as Detroit is the largest city in the state.  The Grand Rapids Metropolitan Area also includes two of the ten most populous counties in Michigan.
+
+![Michigan Counties](michigan2.png)
+
+# Ohio
+
+```{r}
+select(arrange(filter(midwest, state == "OH"), desc(poptotal)), county, poptotal, inmetro)
+```
+
+As shown in the above table, the ten most populous counties in Ohio are all in a metropolitan area.  A breakdown of these ten counties can be seen in the following table.
+
+| County     | County Seat | Metro Area | CSA        |
+|------------|-------------|------------|------------|
+| Cuyahoga   | Cleveland   | Cleveland  | Cleveland  |
+| Franklin   | Columbus    | Columbus   | Columbus   |
+| Hamilton   | Cincinnati  | Cincinnati | Cincinnati |
+| Montgomery | Dayton      | Dayton     | Dayton     |
+| Summit     | Akron       | Akron      | Cleveland  |
+| Lucas      | Toledo      | Toledo     | Toledo     |
+| Stark      | Canton      | Canton     | Cleveland  |
+| Butler     | Hamilton    | Cincinnati | Cincinnati |
+| Lorain     | Elyria      | Cleveland  | Cleveland  |
+| Mahoning   | Youngstown  | Youngstown | Youngstown |
+
+As shown in the table above, two of the ten most populous counties in Ohio are a part of the Cleveland Metropolitan Area with two more being included in the Cleveland Combined Statistical Area.  This makes sense as the Cleveland Combined Statistical Area is the largest combined statistical area in Ohio.  The Cincinnati Metropolitan Area also includes two of the ten most populous counties in Ohio.
+
+![Ohio Counties](ohio2.png)
+
+# Wisconsin
+
+```{r}
+select(arrange(filter(midwest, state == "WI"), desc(poptotal)), county, poptotal, inmetro)
+```
+
+As shown in the above table, the ten most populous counties in Wisconsin are all in a metropolitan area.  A breakdown of these ten counties can be seen in the following table.
+
+| County    | County Seat | Metro Area | CSA       |
+|-----------|-------------|------------|-----------|
+| Milwaukee | Milwaukee   | Milwaukee  | Milwaukee |
+| Dane      | Madison     | Madison    | Madison   |
+| Waukesha  | Waukesha    | Milwaukee  | Milwaukee |
+| Brown     | Green Bay   | Green Bay  | Green Bay |
+| Racine    | Racine      | Racine     | Milwaukee |
+| Outagamie | Appleton    | Appleton   | Appleton  |
+| Winnebago | Oshkosh     | Oshkosh    | Appleton  |
+| Rock      | Janesville  | Janesville | Madison   |
+| Kenosha   | Kenosha     | Chicago    | Chicago   |
+| Marathon  | Wausau      | Wausau     | Wausau    |
+
+As shown in the table above, two of the ten most populous counties in Wisconsin are a part of the Milwaukee Metropolitan Area with a third being included in the Milwaukee Combined Statistical Area.  This makes sense as Milwaukee is the largest city in the state.  Although none of the other counties share a metropolitan area, the Madison and Appleton Combined Statistical Areas each include two of the ten most populous counties in Wisconsin.  Interestingly, Kenosha County is a part of the Chicago Metropolitan Area which makes sense as it borders Illinois.
+
+![Wisconsin Counties](wisconsin2.png)
+
+# Conclusion
+
+Based on this data, it is safe to say that the most populous counties tend to be in the largest metropolitan areas.  This is especially evident in Illinois and Michigan which are dominated by the Chicago and Detroit Metropolitan Areas respectively.  However, the other states included here have more spread out populations.  It is interesting to see this divide between different states, and it could be worth looking into how this plays out in more states.
