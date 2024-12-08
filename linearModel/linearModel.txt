@@ -1,0 +1,1 @@
+My fifth data science assignment included working some exercises from the textbook and creating my own exercise.  For my exercise, I used linear models to see if FBS stadiums have gotten bigger over time.  This was all done using R in RStudio.
