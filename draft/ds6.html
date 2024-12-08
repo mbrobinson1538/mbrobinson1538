@@ -1,0 +1,1774 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.555">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Matthew Robinson">
+
+<title>ds6</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="ds6_files/libs/clipboard/clipboard.min.js"></script>
+<script src="ds6_files/libs/quarto-html/quarto.js"></script>
+<script src="ds6_files/libs/quarto-html/popper.min.js"></script>
+<script src="ds6_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="ds6_files/libs/quarto-html/anchor.min.js"></script>
+<link href="ds6_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="ds6_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="ds6_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="ds6_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="ds6_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">ds6</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Matthew Robinson </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggstance)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'ggstance'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:ggplot2':
+
+    geom_errorbarh, GeomErrorbarh</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggbeeswarm)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.4     ✔ readr     2.1.5
+✔ forcats   1.0.0     ✔ stringr   1.5.1
+✔ lubridate 1.9.3     ✔ tibble    3.2.1
+✔ purrr     1.0.2     ✔ tidyr     1.3.1</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter()            masks stats::filter()
+✖ ggstance::geom_errorbarh() masks ggplot2::geom_errorbarh()
+✖ dplyr::lag()               masks stats::lag()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lvplot)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(hexbin)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(splines)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(maps)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'maps'
+
+The following object is masked from 'package:purrr':
+
+    map</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(geosphere)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'geosphere' was built under R version 4.4.2</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(modelr)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">na.action =</span> na.warn)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="geographys-impact-on-the-nfl-draft" class="level1">
+<h1>Geography’s Impact on the NFL Draft</h1>
+</section>
+<section id="introduction" class="level1">
+<h1>Introduction</h1>
+<p>This project will look at how geography impacts the NFL draft or if it does at all. There are 32 teams in the NFL spread across the whole country. It is very much a national sport, and teams will often have players from all around the country and even the world. Because of this, geography is not usually thought of as a factor in who NFL teams draft. However, I have always wondered if geography does play a role in the NFL draft, and this curiosity is what inspired me to take on this project.</p>
+</section>
+<section id="data-sources" class="level1">
+<h1>Data Sources</h1>
+<p>The main data set that will be used in this project comes from collegefootballdata.com. This data set contains data on every pick from the 2024 NFL Draft. Critically for our purposes, this data includes information on each player’s alma mater and hometown. This data set was downloaded as a csv file, and the read_csv function can be used to transfer that data set into a data frame.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"draft1.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>draft <span class="sc">%&gt;%</span> <span class="fu">print</span>(<span class="at">width =</span> <span class="cn">Inf</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 257 × 23
+   CollegeAthleteId NflAthleteId CollegeId CollegeTeam    CollegeConference
+              &lt;dbl&gt;        &lt;dbl&gt;     &lt;dbl&gt; &lt;chr&gt;          &lt;chr&gt;            
+ 1          4431611       108247        30 USC            Pac-12           
+ 2          4426348       107317        99 LSU            SEC              
+ 3          4431452       108248       153 North Carolina ACC              
+ 4          4432708       108246       194 Ohio State     Big Ten          
+ 5          4683487       108249        87 Notre Dame     FBS Independents 
+ 6          4595348       108251        99 LSU            SEC              
+ 7          4431437       108261       333 Alabama        SEC              
+ 8          4360423       108267       264 Washington     Pac-12           
+ 9          4431299       108252       264 Washington     Pac-12           
+10          4433970       108263       130 Michigan       Big Ten          
+   NflTeam      Year Overall Round  Pick Name                Position        
+   &lt;chr&gt;       &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;               &lt;chr&gt;           
+ 1 Chicago      2024       1     1     1 Caleb Williams      Quarterback     
+ 2 Washington   2024       2     1     2 Jayden Daniels      Quarterback     
+ 3 New England  2024       3     1     3 Drake Maye          Quarterback     
+ 4 Arizona      2024       4     1     4 Marvin Harrison Jr. Wide Receiver   
+ 5 Los Angeles  2024       5     1     5 Joe Alt             Offensive Tackle
+ 6 New York     2024       6     1     6 Malik Nabers        Wide Receiver   
+ 7 Tennessee    2024       7     1     7 JC Latham           Offensive Tackle
+ 8 Atlanta      2024       8     1     8 Michael Penix Jr.   Quarterback     
+ 9 Chicago      2024       9     1     9 Rome Odunze         Wide Receiver   
+10 Minnesota    2024      10     1    10 J.J. McCarthy       Quarterback     
+   Height Weight PreDraftRanking PreDraftPositionRanking PreDraftGrade
+    &lt;dbl&gt;  &lt;dbl&gt;           &lt;dbl&gt;                   &lt;dbl&gt;         &lt;dbl&gt;
+ 1     73    214               1                       1            97
+ 2     76    210               5                       2            94
+ 3     76    223               6                       3            93
+ 4     75    209               2                       1            95
+ 5     81    321               4                       1            94
+ 6     72    199               3                       2            95
+ 7     78    342              23                       5            90
+ 8     74    216              43                       6            85
+ 9     75    212               8                       3            93
+10     75    219               9                       4            92
+   `HometownInfo City` `HometownInfo State` `HometownInfo Country`
+   &lt;chr&gt;               &lt;chr&gt;                &lt;chr&gt;                 
+ 1 Washington          DC                   USA                   
+ 2 San Bernardino      CA                   USA                   
+ 3 Charlotte           NC                   USA                   
+ 4 Philadelphia        PA                   USA                   
+ 5 North Oaks          MN                   USA                   
+ 6 Youngsville         LA                   USA                   
+ 7 Oak Creek           WI                   USA                   
+ 8 Tampa               FL                   USA                   
+ 9 Las Vegas           NV                   USA                   
+10 La Grange Park      IL                   USA                   
+   `HometownInfo Latitude` `HometownInfo Longitude` `HometownInfo CountyFips`
+                     &lt;dbl&gt;                    &lt;dbl&gt;                     &lt;dbl&gt;
+ 1                    38.9                    -77.0                     11001
+ 2                    34.1                   -117.                       6071
+ 3                    35.2                    -80.8                     37119
+ 4                    40.0                    -75.2                     42101
+ 5                    45.1                    -93.1                     27123
+ 6                    30.1                    -92.0                     22055
+ 7                    42.9                    -87.9                     55079
+ 8                    27.9                    -82.5                     12057
+ 9                    36.2                   -115.                      32003
+10                    41.8                    -87.9                     17031
+# ℹ 247 more rows</code></pre>
+</div>
+</div>
+<p>Besides this data set, another data set from collegefootballdata.com will also be used to add information to the draft data set. This data set contains data on every FBS school. For our research, the data on each school’s location will be needed. This data set was downloaded as a csv file and tidied up in a previous assignment. The read_csv function can be used to transfer the tidy version of that data set into a data frame.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>fbs <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"fbs2.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>fbs <span class="sc">%&gt;%</span> <span class="fu">print</span>(<span class="at">width =</span> <span class="cn">Inf</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 134 × 19
+   School         Mascot        Abbreviation Conference        Color1  Color2 
+   &lt;chr&gt;          &lt;chr&gt;         &lt;chr&gt;        &lt;chr&gt;             &lt;chr&gt;   &lt;chr&gt;  
+ 1 Air Force      Falcons       AFA          Mountain West     #004a7b #ffffff
+ 2 Akron          Zips          AKR          Mid-American      #00285e #84754e
+ 3 Alabama        Crimson Tide  ALA          SEC               #9e1632 #ffffff
+ 4 App State      Mountaineers  APP          Sun Belt East     #ffcc00 #222222
+ 5 Arizona        Wildcats      ARIZ         Big 12            #0c234b #ab0520
+ 6 Arizona State  Sun Devils    ASU          Big 12            #8e0c3a #ffc72c
+ 7 Arkansas       Razorbacks    ARK          SEC               #a41f35 #ffffff
+ 8 Arkansas State Red Wolves    ARST         Sun Belt West     #e81018 #000000
+ 9 Army           Black Knights ARMY         American Athletic #ce9c00 #231f20
+10 Auburn         Tigers        AUB          SEC               #002b5c #f26522
+   Twitter          Stadium                  City             State   Zip
+   &lt;chr&gt;            &lt;chr&gt;                    &lt;chr&gt;            &lt;chr&gt; &lt;dbl&gt;
+ 1 @AF_Football     Falcon Stadium           Colorado Springs CO    80840
+ 2 @ZipsFB          InfoCision Stadium       Akron            OH    44399
+ 3 @AlabamaFTBL     Bryant-Denny Stadium     Tuscaloosa       AL    35487
+ 4 @AppState_FB     Kidd Brewer Stadium      Boone            NC    28608
+ 5 @ArizonaFBall    Arizona Stadium          Tucson           AZ    85721
+ 6 @ASUFootball     Mountain America Stadium Tempe            AZ    85287
+ 7 @RazorbackFB     Razorback Stadium        Fayetteville     AR    72702
+ 8 @AStateFB        Centennial Bank Stadium  Jonesboro        AR    72404
+ 9 @ArmyWP_Football Michie Stadium           West Point       NY    10996
+10 @AuburnFootball  Jordan-Hare Stadium      Auburn           AL    36849
+   Timezone         Latitude Longitude Elevation Capacity Opening Grass Dome 
+   &lt;chr&gt;               &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt; &lt;lgl&gt; &lt;lgl&gt;
+ 1 America/Denver       39.0    -105.     2025.     46692    1962 FALSE FALSE
+ 2 America/New_York     41.1     -81.5     321.     30000    2009 FALSE FALSE
+ 3 America/Chicago      33.2     -87.6      70.1   101821    1929 TRUE  FALSE
+ 4 America/New_York     36.2     -81.7     991.     30000    1962 FALSE FALSE
+ 5 America/Phoenix      32.2    -111.      742.     50782    1928 FALSE FALSE
+ 6 America/Phoenix      33.4    -112.      360.     65870    1958 TRUE  FALSE
+ 7 America/Chicago      36.1     -94.2     404.     80000    1938 FALSE FALSE
+ 8 America/Chicago      35.8     -90.7      89.5    30382    1974 FALSE FALSE
+ 9 America/New_York     41.4     -74.0      99.2    38000    1924 FALSE FALSE
+10 America/Chicago      32.6     -85.5     201.     87451    1939 TRUE  FALSE
+# ℹ 124 more rows</code></pre>
+</div>
+</div>
+<p>These two data sets will be very useful, but they will not provide all the information we need. Further information will be found through my own research and added manually into the data set. Most of this information will come from Wikipedia.</p>
+</section>
+<section id="tidying-the-data" class="level1">
+<h1>Tidying the Data</h1>
+<p>Before we can start looking at this data, we must start by making it tidy. The first thing we can do is remove several unnecessary columns. The ID columns are unique identifiers that are not needed since we are not referencing the larger database, the Year column is unnecessary since we are only looking at 2024, and several of each player’s measurables including height, weight, and their rankings and grades are not relevant to our study. Therefore, all of these columns can be removed. There are also a couple of geography columns that can be removed. The vast majority of players are from the USA, and the few that are not can be specified elsewhere in the data set. We will also not be looking at counties in this project, so that column can be removed too.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">select</span>(draft, <span class="sc">-</span><span class="fu">c</span>(<span class="st">"CollegeAthleteId"</span>, <span class="st">"NflAthleteId"</span>, <span class="st">"CollegeId"</span>, <span class="st">"Year"</span>, <span class="st">"Height"</span>, <span class="st">"Weight"</span>, <span class="st">"PreDraftRanking"</span>, <span class="st">"PreDraftPositionRanking"</span>, <span class="st">"PreDraftGrade"</span>, <span class="st">"HometownInfo Country"</span>, <span class="st">"HometownInfo CountyFips"</span>))</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>draft <span class="sc">%&gt;%</span> <span class="fu">print</span>(<span class="at">width =</span> <span class="cn">Inf</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 257 × 12
+   CollegeTeam    CollegeConference NflTeam     Overall Round  Pick
+   &lt;chr&gt;          &lt;chr&gt;             &lt;chr&gt;         &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+ 1 USC            Pac-12            Chicago           1     1     1
+ 2 LSU            SEC               Washington        2     1     2
+ 3 North Carolina ACC               New England       3     1     3
+ 4 Ohio State     Big Ten           Arizona           4     1     4
+ 5 Notre Dame     FBS Independents  Los Angeles       5     1     5
+ 6 LSU            SEC               New York          6     1     6
+ 7 Alabama        SEC               Tennessee         7     1     7
+ 8 Washington     Pac-12            Atlanta           8     1     8
+ 9 Washington     Pac-12            Chicago           9     1     9
+10 Michigan       Big Ten           Minnesota        10     1    10
+   Name                Position         `HometownInfo City` `HometownInfo State`
+   &lt;chr&gt;               &lt;chr&gt;            &lt;chr&gt;               &lt;chr&gt;               
+ 1 Caleb Williams      Quarterback      Washington          DC                  
+ 2 Jayden Daniels      Quarterback      San Bernardino      CA                  
+ 3 Drake Maye          Quarterback      Charlotte           NC                  
+ 4 Marvin Harrison Jr. Wide Receiver    Philadelphia        PA                  
+ 5 Joe Alt             Offensive Tackle North Oaks          MN                  
+ 6 Malik Nabers        Wide Receiver    Youngsville         LA                  
+ 7 JC Latham           Offensive Tackle Oak Creek           WI                  
+ 8 Michael Penix Jr.   Quarterback      Tampa               FL                  
+ 9 Rome Odunze         Wide Receiver    Las Vegas           NV                  
+10 J.J. McCarthy       Quarterback      La Grange Park      IL                  
+   `HometownInfo Latitude` `HometownInfo Longitude`
+                     &lt;dbl&gt;                    &lt;dbl&gt;
+ 1                    38.9                    -77.0
+ 2                    34.1                   -117. 
+ 3                    35.2                    -80.8
+ 4                    40.0                    -75.2
+ 5                    45.1                    -93.1
+ 6                    30.1                    -92.0
+ 7                    42.9                    -87.9
+ 8                    27.9                    -82.5
+ 9                    36.2                   -115. 
+10                    41.8                    -87.9
+# ℹ 247 more rows</code></pre>
+</div>
+</div>
+<p>The next step is to change some column names. Several of the column names should be changed because they are too long or not specific enough. In fact, the Overall, Round, Pick, and Position columns are the only ones whose names do not need to be changed. Every other column will receive new names.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">rename</span>(draft, <span class="st">"College"</span> <span class="ot">=</span> <span class="st">"CollegeTeam"</span>)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">rename</span>(draft, <span class="st">"Conference"</span> <span class="ot">=</span> <span class="st">"CollegeConference"</span>)</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">rename</span>(draft, <span class="st">"Team"</span> <span class="ot">=</span> <span class="st">"NflTeam"</span>)</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">rename</span>(draft, <span class="st">"Player"</span> <span class="ot">=</span> <span class="st">"Name"</span>)</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">rename</span>(draft, <span class="st">"HTCity"</span> <span class="ot">=</span> <span class="st">"HometownInfo City"</span>)</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">rename</span>(draft, <span class="st">"HTState"</span> <span class="ot">=</span> <span class="st">"HometownInfo State"</span>)</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">rename</span>(draft, <span class="st">"HTLatitude"</span> <span class="ot">=</span> <span class="st">"HometownInfo Latitude"</span>)</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">rename</span>(draft, <span class="st">"HTLongitude"</span> <span class="ot">=</span> <span class="st">"HometownInfo Longitude"</span>)</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>draft <span class="sc">%&gt;%</span> <span class="fu">print</span>(<span class="at">width =</span> <span class="cn">Inf</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 257 × 12
+   College        Conference       Team        Overall Round  Pick
+   &lt;chr&gt;          &lt;chr&gt;            &lt;chr&gt;         &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+ 1 USC            Pac-12           Chicago           1     1     1
+ 2 LSU            SEC              Washington        2     1     2
+ 3 North Carolina ACC              New England       3     1     3
+ 4 Ohio State     Big Ten          Arizona           4     1     4
+ 5 Notre Dame     FBS Independents Los Angeles       5     1     5
+ 6 LSU            SEC              New York          6     1     6
+ 7 Alabama        SEC              Tennessee         7     1     7
+ 8 Washington     Pac-12           Atlanta           8     1     8
+ 9 Washington     Pac-12           Chicago           9     1     9
+10 Michigan       Big Ten          Minnesota        10     1    10
+   Player              Position         HTCity         HTState HTLatitude
+   &lt;chr&gt;               &lt;chr&gt;            &lt;chr&gt;          &lt;chr&gt;        &lt;dbl&gt;
+ 1 Caleb Williams      Quarterback      Washington     DC            38.9
+ 2 Jayden Daniels      Quarterback      San Bernardino CA            34.1
+ 3 Drake Maye          Quarterback      Charlotte      NC            35.2
+ 4 Marvin Harrison Jr. Wide Receiver    Philadelphia   PA            40.0
+ 5 Joe Alt             Offensive Tackle North Oaks     MN            45.1
+ 6 Malik Nabers        Wide Receiver    Youngsville    LA            30.1
+ 7 JC Latham           Offensive Tackle Oak Creek      WI            42.9
+ 8 Michael Penix Jr.   Quarterback      Tampa          FL            27.9
+ 9 Rome Odunze         Wide Receiver    Las Vegas      NV            36.2
+10 J.J. McCarthy       Quarterback      La Grange Park IL            41.8
+   HTLongitude
+         &lt;dbl&gt;
+ 1       -77.0
+ 2      -117. 
+ 3       -80.8
+ 4       -75.2
+ 5       -93.1
+ 6       -92.0
+ 7       -87.9
+ 8       -82.5
+ 9      -115. 
+10       -87.9
+# ℹ 247 more rows</code></pre>
+</div>
+</div>
+<p>Now that the columns have been renamed, it is now time to start adding in more data. First of all, we will add in data from the fbs data set. We want to match each entry in the data set with the appropriate data from the City, State, Latitude, and Longitude columns from the fbs data set based on the College column. This can be done with a left join. This will not cover every college because not every college in the draft data set is in the FBS, so that data will have to be manually added in later.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> draft <span class="sc">%&gt;%</span> <span class="fu">left_join</span>(<span class="fu">select</span>(fbs, School, City, State, Latitude, Longitude), <span class="fu">c</span>(<span class="st">"College"</span> <span class="ot">=</span> <span class="st">"School"</span>))</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">rename</span>(draft, <span class="st">"AMCity"</span> <span class="ot">=</span> <span class="st">"City"</span>)</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">rename</span>(draft, <span class="st">"AMState"</span> <span class="ot">=</span> <span class="st">"State"</span>)</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">rename</span>(draft, <span class="st">"AMLatitude"</span> <span class="ot">=</span> <span class="st">"Latitude"</span>)</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">rename</span>(draft, <span class="st">"AMLongitude"</span> <span class="ot">=</span> <span class="st">"Longitude"</span>)</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>draft <span class="sc">%&gt;%</span> <span class="fu">print</span>(<span class="at">width =</span> <span class="cn">Inf</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 257 × 16
+   College        Conference       Team        Overall Round  Pick
+   &lt;chr&gt;          &lt;chr&gt;            &lt;chr&gt;         &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+ 1 USC            Pac-12           Chicago           1     1     1
+ 2 LSU            SEC              Washington        2     1     2
+ 3 North Carolina ACC              New England       3     1     3
+ 4 Ohio State     Big Ten          Arizona           4     1     4
+ 5 Notre Dame     FBS Independents Los Angeles       5     1     5
+ 6 LSU            SEC              New York          6     1     6
+ 7 Alabama        SEC              Tennessee         7     1     7
+ 8 Washington     Pac-12           Atlanta           8     1     8
+ 9 Washington     Pac-12           Chicago           9     1     9
+10 Michigan       Big Ten          Minnesota        10     1    10
+   Player              Position         HTCity         HTState HTLatitude
+   &lt;chr&gt;               &lt;chr&gt;            &lt;chr&gt;          &lt;chr&gt;        &lt;dbl&gt;
+ 1 Caleb Williams      Quarterback      Washington     DC            38.9
+ 2 Jayden Daniels      Quarterback      San Bernardino CA            34.1
+ 3 Drake Maye          Quarterback      Charlotte      NC            35.2
+ 4 Marvin Harrison Jr. Wide Receiver    Philadelphia   PA            40.0
+ 5 Joe Alt             Offensive Tackle North Oaks     MN            45.1
+ 6 Malik Nabers        Wide Receiver    Youngsville    LA            30.1
+ 7 JC Latham           Offensive Tackle Oak Creek      WI            42.9
+ 8 Michael Penix Jr.   Quarterback      Tampa          FL            27.9
+ 9 Rome Odunze         Wide Receiver    Las Vegas      NV            36.2
+10 J.J. McCarthy       Quarterback      La Grange Park IL            41.8
+   HTLongitude AMCity      AMState AMLatitude AMLongitude
+         &lt;dbl&gt; &lt;chr&gt;       &lt;chr&gt;        &lt;dbl&gt;       &lt;dbl&gt;
+ 1       -77.0 Los Angeles CA            34.0      -118. 
+ 2      -117.  Baton Rouge LA            30.4       -91.2
+ 3       -80.8 Chapel Hill NC            35.9       -79.0
+ 4       -75.2 Columbus    OH            40.0       -83.0
+ 5       -93.1 Notre Dame  IN            41.7       -86.2
+ 6       -92.0 Baton Rouge LA            30.4       -91.2
+ 7       -87.9 Tuscaloosa  AL            33.2       -87.6
+ 8       -82.5 Seattle     WA            47.7      -122. 
+ 9      -115.  Seattle     WA            47.7      -122. 
+10       -87.9 Ann Arbor   MI            42.3       -83.7
+# ℹ 247 more rows</code></pre>
+</div>
+</div>
+<p>The last columns we need to add are geographic data for each NFL team. Once again, this will include city, state, latitude, and longitude. Unfortunately, I do not have access to a data set with this information, so I will have to add the data for each team manually. This information will come from Wikipedia. The following map shows that the coordinates have been added correctly.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">mutate</span>(draft, <span class="at">NFLCity =</span> <span class="cn">NA</span>, <span class="at">NFLState =</span> <span class="cn">NA</span>, <span class="at">NFLLatitude =</span> <span class="cn">NA</span>, <span class="at">NFLLongitude =</span> <span class="cn">NA</span>)</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">mutate</span>(draft, <span class="at">NFLCity =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Arizona"</span>, <span class="st">"Glendale"</span>, NFLCity), <span class="at">NFLState =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Arizona"</span>, <span class="st">"AZ"</span>, NFLState), <span class="at">NFLLatitude =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Arizona"</span>, <span class="fl">33.528</span>, NFLLatitude), <span class="at">NFLLongitude =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Arizona"</span>, <span class="sc">-</span><span class="fl">112.263</span>, NFLLongitude))</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">mutate</span>(draft, <span class="at">NFLCity =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Atlanta"</span>, <span class="st">"Atlanta"</span>, NFLCity), <span class="at">NFLState =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Atlanta"</span>, <span class="st">"GA"</span>, NFLState), <span class="at">NFLLatitude =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Atlanta"</span>, <span class="fl">33.756</span>, NFLLatitude), <span class="at">NFLLongitude =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Atlanta"</span>, <span class="sc">-</span><span class="fl">84.4</span>, NFLLongitude))</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">mutate</span>(draft, <span class="at">NFLCity =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Baltimore"</span>, <span class="st">"Baltimore"</span>, NFLCity), <span class="at">NFLState =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Baltimore"</span>, <span class="st">"MD"</span>, NFLState), <span class="at">NFLLatitude =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Baltimore"</span>, <span class="fl">39.278</span>, NFLLatitude), <span class="at">NFLLongitude =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Baltimore"</span>, <span class="sc">-</span><span class="fl">76.623</span>, NFLLongitude))</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">mutate</span>(draft, <span class="at">NFLCity =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Buffalo"</span>, <span class="st">"Orchard Park"</span>, NFLCity), <span class="at">NFLState =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Buffalo"</span>, <span class="st">"NY"</span>, NFLState), <span class="at">NFLLatitude =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Buffalo"</span>, <span class="fl">42.774</span>, NFLLatitude), <span class="at">NFLLongitude =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Buffalo"</span>, <span class="sc">-</span><span class="fl">78.787</span>, NFLLongitude))</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">mutate</span>(draft, <span class="at">NFLCity =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Carolina"</span>, <span class="st">"Charlotte"</span>, NFLCity), <span class="at">NFLState =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Carolina"</span>, <span class="st">"NC"</span>, NFLState), <span class="at">NFLLatitude =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Carolina"</span>, <span class="fl">35.226</span>, NFLLatitude), <span class="at">NFLLongitude =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Carolina"</span>, <span class="sc">-</span><span class="fl">80.853</span>, NFLLongitude))</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">mutate</span>(draft, <span class="at">NFLCity =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Chicago"</span>, <span class="st">"Chicago"</span>, NFLCity), <span class="at">NFLState =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Chicago"</span>, <span class="st">"IL"</span>, NFLState), <span class="at">NFLLatitude =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Chicago"</span>, <span class="fl">41.8623</span>, NFLLatitude), <span class="at">NFLLongitude =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Chicago"</span>, <span class="sc">-</span><span class="fl">87.6167</span>, NFLLongitude))</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">mutate</span>(draft, <span class="at">NFLCity =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Cincinnati"</span>, <span class="st">"Cincinnati"</span>, NFLCity), <span class="at">NFLState =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Cincinnati"</span>, <span class="st">"OH"</span>, NFLState), <span class="at">NFLLatitude =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Cincinnati"</span>, <span class="fl">39.095</span>, NFLLatitude), <span class="at">NFLLongitude =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Cincinnati"</span>, <span class="sc">-</span><span class="fl">84.516</span>, NFLLongitude))</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">mutate</span>(draft, <span class="at">NFLCity =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Cleveland"</span>, <span class="st">"Cleveland"</span>, NFLCity), <span class="at">NFLState =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Cleveland"</span>, <span class="st">"OH"</span>, NFLState), <span class="at">NFLLatitude =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Cleveland"</span>, <span class="fl">41.5</span>, NFLLatitude), <span class="at">NFLLongitude =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Cleveland"</span>, <span class="sc">-</span><span class="fl">81.7</span>, NFLLongitude))</span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">mutate</span>(draft, <span class="at">NFLCity =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Dallas"</span>, <span class="st">"Arlington"</span>, NFLCity), <span class="at">NFLState =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Dallas"</span>, <span class="st">"TX"</span>, NFLState), <span class="at">NFLLatitude =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Dallas"</span>, <span class="fl">32.748</span>, NFLLatitude), <span class="at">NFLLongitude =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Dallas"</span>, <span class="sc">-</span><span class="fl">97.093</span>, NFLLongitude))</span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">mutate</span>(draft, <span class="at">NFLCity =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Denver"</span>, <span class="st">"Denver"</span>, NFLCity), <span class="at">NFLState =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Denver"</span>, <span class="st">"CO"</span>, NFLState), <span class="at">NFLLatitude =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Denver"</span>, <span class="fl">39.744</span>, NFLLatitude), <span class="at">NFLLongitude =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Denver"</span>, <span class="sc">-</span><span class="fl">105.02</span>, NFLLongitude))</span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">mutate</span>(draft, <span class="at">NFLCity =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Detroit"</span>, <span class="st">"Detroit"</span>, NFLCity), <span class="at">NFLState =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Detroit"</span>, <span class="st">"MI"</span>, NFLState), <span class="at">NFLLatitude =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Detroit"</span>, <span class="fl">42.34</span>, NFLLatitude), <span class="at">NFLLongitude =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Detroit"</span>, <span class="sc">-</span><span class="fl">83.046</span>, NFLLongitude))</span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">mutate</span>(draft, <span class="at">NFLCity =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Green Bay"</span>, <span class="st">"Green Bay"</span>, NFLCity), <span class="at">NFLState =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Green Bay"</span>, <span class="st">"WI"</span>, NFLState), <span class="at">NFLLatitude =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Green Bay"</span>, <span class="fl">44.5</span>, NFLLatitude), <span class="at">NFLLongitude =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Green Bay"</span>, <span class="sc">-</span><span class="fl">88.062</span>, NFLLongitude))</span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">mutate</span>(draft, <span class="at">NFLCity =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Houston"</span>, <span class="st">"Houston"</span>, NFLCity), <span class="at">NFLState =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Houston"</span>, <span class="st">"TX"</span>, NFLState), <span class="at">NFLLatitude =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Houston"</span>, <span class="fl">29.685</span>, NFLLatitude), <span class="at">NFLLongitude =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Houston"</span>, <span class="sc">-</span><span class="fl">95.41</span>, NFLLongitude))</span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">mutate</span>(draft, <span class="at">NFLCity =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Indianapolis"</span>, <span class="st">"Indianapolis"</span>, NFLCity), <span class="at">NFLState =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Indianapolis"</span>, <span class="st">"IN"</span>, NFLState), <span class="at">NFLLatitude =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Indianapolis"</span>, <span class="fl">39.76</span>, NFLLatitude), <span class="at">NFLLongitude =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Indianapolis"</span>, <span class="sc">-</span><span class="fl">86.164</span>, NFLLongitude))</span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">mutate</span>(draft, <span class="at">NFLCity =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Jacksonville"</span>, <span class="st">"Jacksonville"</span>, NFLCity), <span class="at">NFLState =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Jacksonville"</span>, <span class="st">"FL"</span>, NFLState), <span class="at">NFLLatitude =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Jacksonville"</span>, <span class="fl">30.324</span>, NFLLatitude), <span class="at">NFLLongitude =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Jacksonville"</span>, <span class="sc">-</span><span class="fl">81.6375</span>, NFLLongitude))</span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">mutate</span>(draft, <span class="at">NFLCity =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Kansas City"</span>, <span class="st">"Kansas City"</span>, NFLCity), <span class="at">NFLState =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Kansas City"</span>, <span class="st">"MO"</span>, NFLState), <span class="at">NFLLatitude =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Kansas City"</span>, <span class="fl">39.049</span>, NFLLatitude), <span class="at">NFLLongitude =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Kansas City"</span>, <span class="sc">-</span><span class="fl">94.484</span>, NFLLongitude))</span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">mutate</span>(draft, <span class="at">NFLCity =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Las Vegas"</span>, <span class="st">"Paradise"</span>, NFLCity), <span class="at">NFLState =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Las Vegas"</span>, <span class="st">"NV"</span>, NFLState), <span class="at">NFLLatitude =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Las Vegas"</span>, <span class="fl">36.09</span>, NFLLatitude), <span class="at">NFLLongitude =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Las Vegas"</span>, <span class="sc">-</span><span class="fl">115.184</span>, NFLLongitude))</span>
+<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">mutate</span>(draft, <span class="at">NFLCity =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Los Angeles"</span>, <span class="st">"Inglewood"</span>, NFLCity), <span class="at">NFLState =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Los Angeles"</span>, <span class="st">"CA"</span>, NFLState), <span class="at">NFLLatitude =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Los Angeles"</span>, <span class="fl">33.953</span>, NFLLatitude), <span class="at">NFLLongitude =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Los Angeles"</span>, <span class="sc">-</span><span class="fl">118.339</span>, NFLLongitude))</span>
+<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">mutate</span>(draft, <span class="at">NFLCity =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Miami"</span>, <span class="st">"Miami Gardens"</span>, NFLCity), <span class="at">NFLState =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Miami"</span>, <span class="st">"FL"</span>, NFLState), <span class="at">NFLLatitude =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Miami"</span>, <span class="fl">25.958</span>, NFLLatitude), <span class="at">NFLLongitude =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Miami"</span>, <span class="sc">-</span><span class="fl">80.239</span>, NFLLongitude))</span>
+<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">mutate</span>(draft, <span class="at">NFLCity =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Minnesota"</span>, <span class="st">"Minneapolis"</span>, NFLCity), <span class="at">NFLState =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Minnesota"</span>, <span class="st">"MN"</span>, NFLState), <span class="at">NFLLatitude =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Minnesota"</span>, <span class="fl">44.974</span>, NFLLatitude), <span class="at">NFLLongitude =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Minnesota"</span>, <span class="sc">-</span><span class="fl">93.258</span>, NFLLongitude))</span>
+<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">mutate</span>(draft, <span class="at">NFLCity =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"New England"</span>, <span class="st">"Foxborough"</span>, NFLCity), <span class="at">NFLState =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"New England"</span>, <span class="st">"MA"</span>, NFLState), <span class="at">NFLLatitude =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"New England"</span>, <span class="fl">42.091</span>, NFLLatitude), <span class="at">NFLLongitude =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"New England"</span>, <span class="sc">-</span><span class="fl">71.264</span>, NFLLongitude))</span>
+<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">mutate</span>(draft, <span class="at">NFLCity =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"New Orleans"</span>, <span class="st">"New Orleans"</span>, NFLCity), <span class="at">NFLState =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"New Orleans"</span>, <span class="st">"LA"</span>, NFLState), <span class="at">NFLLatitude =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"New Orleans"</span>, <span class="fl">29.95</span>, NFLLatitude), <span class="at">NFLLongitude =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"New Orleans"</span>, <span class="sc">-</span><span class="fl">90.081</span>, NFLLongitude))</span>
+<span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">mutate</span>(draft, <span class="at">NFLCity =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"New York"</span>, <span class="st">"East Rutherford"</span>, NFLCity), <span class="at">NFLState =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"New York"</span>, <span class="st">"NJ"</span>, NFLState), <span class="at">NFLLatitude =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"New York"</span>, <span class="fl">40.814</span>, NFLLatitude), <span class="at">NFLLongitude =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"New York"</span>, <span class="sc">-</span><span class="fl">74.074</span>, NFLLongitude))</span>
+<span id="cb22-25"><a href="#cb22-25" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">mutate</span>(draft, <span class="at">NFLCity =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Philadelphia"</span>, <span class="st">"Philadelphia"</span>, NFLCity), <span class="at">NFLState =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Philadelphia"</span>, <span class="st">"PA"</span>, NFLState), <span class="at">NFLLatitude =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Philadelphia"</span>, <span class="fl">39.9</span>, NFLLatitude), <span class="at">NFLLongitude =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Philadelphia"</span>, <span class="sc">-</span><span class="fl">75.1675</span>, NFLLongitude))</span>
+<span id="cb22-26"><a href="#cb22-26" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">mutate</span>(draft, <span class="at">NFLCity =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Pittsburgh"</span>, <span class="st">"Pittsburgh"</span>, NFLCity), <span class="at">NFLState =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Pittsburgh"</span>, <span class="st">"PA"</span>, NFLState), <span class="at">NFLLatitude =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Pittsburgh"</span>, <span class="fl">40.447</span>, NFLLatitude), <span class="at">NFLLongitude =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Pittsburgh"</span>, <span class="sc">-</span><span class="fl">80.016</span>, NFLLongitude))</span>
+<span id="cb22-27"><a href="#cb22-27" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">mutate</span>(draft, <span class="at">NFLCity =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"San Francisco"</span>, <span class="st">"Santa Clara"</span>, NFLCity), <span class="at">NFLState =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"San Francisco"</span>, <span class="st">"CA"</span>, NFLState), <span class="at">NFLLatitude =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"San Francisco"</span>, <span class="fl">37.403</span>, NFLLatitude), <span class="at">NFLLongitude =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"San Francisco"</span>, <span class="sc">-</span><span class="fl">121.97</span>, NFLLongitude))</span>
+<span id="cb22-28"><a href="#cb22-28" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">mutate</span>(draft, <span class="at">NFLCity =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Seattle"</span>, <span class="st">"Seattle"</span>, NFLCity), <span class="at">NFLState =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Seattle"</span>, <span class="st">"WA"</span>, NFLState), <span class="at">NFLLatitude =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Seattle"</span>, <span class="fl">47.5952</span>, NFLLatitude), <span class="at">NFLLongitude =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Seattle"</span>, <span class="sc">-</span><span class="fl">122.3316</span>, NFLLongitude))</span>
+<span id="cb22-29"><a href="#cb22-29" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">mutate</span>(draft, <span class="at">NFLCity =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Tampa Bay"</span>, <span class="st">"Tampa"</span>, NFLCity), <span class="at">NFLState =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Tampa Bay"</span>, <span class="st">"FL"</span>, NFLState), <span class="at">NFLLatitude =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Tampa Bay"</span>, <span class="fl">27.976</span>, NFLLatitude), <span class="at">NFLLongitude =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Tampa Bay"</span>, <span class="sc">-</span><span class="fl">82.5</span>, NFLLongitude))</span>
+<span id="cb22-30"><a href="#cb22-30" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">mutate</span>(draft, <span class="at">NFLCity =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Tennessee"</span>, <span class="st">"Nashville"</span>, NFLCity), <span class="at">NFLState =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Tennessee"</span>, <span class="st">"TN"</span>, NFLState), <span class="at">NFLLatitude =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Tennessee"</span>, <span class="fl">36.166</span>, NFLLatitude), <span class="at">NFLLongitude =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Tennessee"</span>, <span class="sc">-</span><span class="fl">86.771</span>, NFLLongitude))</span>
+<span id="cb22-31"><a href="#cb22-31" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">mutate</span>(draft, <span class="at">NFLCity =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Washington"</span>, <span class="st">"Landover"</span>, NFLCity), <span class="at">NFLState =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Washington"</span>, <span class="st">"MD"</span>, NFLState), <span class="at">NFLLatitude =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Washington"</span>, <span class="fl">38.9</span>, NFLLatitude), <span class="at">NFLLongitude =</span> <span class="fu">ifelse</span>(Team <span class="sc">==</span> <span class="st">"Washington"</span>, <span class="sc">-</span><span class="fl">76.864</span>, NFLLongitude))</span>
+<span id="cb22-32"><a href="#cb22-32" aria-hidden="true" tabindex="-1"></a>draft <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(NFLLongitude, NFLLatitude)) <span class="sc">+</span> <span class="fu">borders</span>(<span class="st">"state"</span>) <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">coord_quickmap</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="ds6_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Now that we have all the columns we need, we can rearrange these columns into an order that makes more sense. We want to be able to identify each pick from the first column, so the Overall column should come first. This would be followed by other identifiers including the Round, Pick, Player, and Position columns. The Team column would come next followed by the NFL geography columns. The College and Conference columns would come after that followed by the alma mater geography columns. Finally, the hometown geography columns will come last.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">select</span>(draft, Overall, Round, Pick, Player, Position, Team, NFLCity, NFLState, NFLLatitude, NFLLongitude, College, Conference, AMCity, AMState, AMLatitude, AMLongitude, HTCity, HTState, HTLatitude, HTLongitude)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>draft <span class="sc">%&gt;%</span> <span class="fu">print</span>(<span class="at">width =</span> <span class="cn">Inf</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 257 × 20
+   Overall Round  Pick Player              Position         Team       
+     &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;               &lt;chr&gt;            &lt;chr&gt;      
+ 1       1     1     1 Caleb Williams      Quarterback      Chicago    
+ 2       2     1     2 Jayden Daniels      Quarterback      Washington 
+ 3       3     1     3 Drake Maye          Quarterback      New England
+ 4       4     1     4 Marvin Harrison Jr. Wide Receiver    Arizona    
+ 5       5     1     5 Joe Alt             Offensive Tackle Los Angeles
+ 6       6     1     6 Malik Nabers        Wide Receiver    New York   
+ 7       7     1     7 JC Latham           Offensive Tackle Tennessee  
+ 8       8     1     8 Michael Penix Jr.   Quarterback      Atlanta    
+ 9       9     1     9 Rome Odunze         Wide Receiver    Chicago    
+10      10     1    10 J.J. McCarthy       Quarterback      Minnesota  
+   NFLCity         NFLState NFLLatitude NFLLongitude College       
+   &lt;chr&gt;           &lt;chr&gt;          &lt;dbl&gt;        &lt;dbl&gt; &lt;chr&gt;         
+ 1 Chicago         IL              41.9        -87.6 USC           
+ 2 Landover        MD              38.9        -76.9 LSU           
+ 3 Foxborough      MA              42.1        -71.3 North Carolina
+ 4 Glendale        AZ              33.5       -112.  Ohio State    
+ 5 Inglewood       CA              34.0       -118.  Notre Dame    
+ 6 East Rutherford NJ              40.8        -74.1 LSU           
+ 7 Nashville       TN              36.2        -86.8 Alabama       
+ 8 Atlanta         GA              33.8        -84.4 Washington    
+ 9 Chicago         IL              41.9        -87.6 Washington    
+10 Minneapolis     MN              45.0        -93.3 Michigan      
+   Conference       AMCity      AMState AMLatitude AMLongitude HTCity        
+   &lt;chr&gt;            &lt;chr&gt;       &lt;chr&gt;        &lt;dbl&gt;       &lt;dbl&gt; &lt;chr&gt;         
+ 1 Pac-12           Los Angeles CA            34.0      -118.  Washington    
+ 2 SEC              Baton Rouge LA            30.4       -91.2 San Bernardino
+ 3 ACC              Chapel Hill NC            35.9       -79.0 Charlotte     
+ 4 Big Ten          Columbus    OH            40.0       -83.0 Philadelphia  
+ 5 FBS Independents Notre Dame  IN            41.7       -86.2 North Oaks    
+ 6 SEC              Baton Rouge LA            30.4       -91.2 Youngsville   
+ 7 SEC              Tuscaloosa  AL            33.2       -87.6 Oak Creek     
+ 8 Pac-12           Seattle     WA            47.7      -122.  Tampa         
+ 9 Pac-12           Seattle     WA            47.7      -122.  Las Vegas     
+10 Big Ten          Ann Arbor   MI            42.3       -83.7 La Grange Park
+   HTState HTLatitude HTLongitude
+   &lt;chr&gt;        &lt;dbl&gt;       &lt;dbl&gt;
+ 1 DC            38.9       -77.0
+ 2 CA            34.1      -117. 
+ 3 NC            35.2       -80.8
+ 4 PA            40.0       -75.2
+ 5 MN            45.1       -93.1
+ 6 LA            30.1       -92.0
+ 7 WI            42.9       -87.9
+ 8 FL            27.9       -82.5
+ 9 NV            36.2      -115. 
+10 IL            41.8       -87.9
+# ℹ 247 more rows</code></pre>
+</div>
+</div>
+<p>Now that the columns are in order, we need to fix some of the data. First of all, you may notice that each NFL team is only identified by their location name. However, there are two teams each named New York and Los Angeles. Therefore, I need to go through and specify which team each one is. Once again, I will be using information from Wikipedia to fill these in. It should be noted that I waited until after assigning geographic data to each team to do this step because the New York and Los Angeles teams each share a stadium.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">mutate</span>(draft, <span class="at">Team =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">11</span> <span class="sc">|</span> Overall <span class="sc">==</span> <span class="dv">65</span> <span class="sc">|</span> Overall <span class="sc">==</span> <span class="dv">134</span> <span class="sc">|</span> Overall <span class="sc">==</span> <span class="dv">171</span> <span class="sc">|</span> Overall <span class="sc">==</span> <span class="dv">173</span> <span class="sc">|</span> Overall <span class="sc">==</span> <span class="dv">176</span> <span class="sc">|</span> Overall <span class="sc">==</span> <span class="dv">257</span>, <span class="st">"NYJ"</span>, Team))</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">mutate</span>(draft, <span class="at">Team =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">6</span> <span class="sc">|</span> Overall <span class="sc">==</span> <span class="dv">47</span> <span class="sc">|</span> Overall <span class="sc">==</span> <span class="dv">70</span> <span class="sc">|</span> Overall <span class="sc">==</span> <span class="dv">107</span> <span class="sc">|</span> Overall <span class="sc">==</span> <span class="dv">166</span> <span class="sc">|</span> Overall <span class="sc">==</span> <span class="dv">183</span>, <span class="st">"NYG"</span>, Team))</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">mutate</span>(draft, <span class="at">Team =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">5</span> <span class="sc">|</span> Overall <span class="sc">==</span> <span class="dv">34</span> <span class="sc">|</span> Overall <span class="sc">==</span> <span class="dv">69</span> <span class="sc">|</span> Overall <span class="sc">==</span> <span class="dv">105</span> <span class="sc">|</span> Overall <span class="sc">==</span> <span class="dv">137</span> <span class="sc">|</span> Overall <span class="sc">==</span> <span class="dv">140</span> <span class="sc">|</span> Overall <span class="sc">==</span> <span class="dv">181</span> <span class="sc">|</span> Overall <span class="sc">==</span> <span class="dv">225</span> <span class="sc">|</span> Overall <span class="sc">==</span> <span class="dv">253</span>, <span class="st">"LAC"</span>, Team))</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">mutate</span>(draft, <span class="at">Team =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">19</span> <span class="sc">|</span> Overall <span class="sc">==</span> <span class="dv">39</span> <span class="sc">|</span> Overall <span class="sc">==</span> <span class="dv">83</span> <span class="sc">|</span> Overall <span class="sc">==</span> <span class="dv">99</span> <span class="sc">|</span> Overall <span class="sc">==</span> <span class="dv">154</span> <span class="sc">|</span> Overall <span class="sc">==</span> <span class="dv">196</span> <span class="sc">|</span> Overall <span class="sc">==</span> <span class="dv">209</span> <span class="sc">|</span> Overall <span class="sc">==</span> <span class="dv">213</span> <span class="sc">|</span> Overall <span class="sc">==</span> <span class="dv">217</span> <span class="sc">|</span> Overall <span class="sc">==</span> <span class="dv">254</span>, <span class="st">"LAR"</span>, Team))</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(draft, Team <span class="sc">==</span> <span class="st">"New York"</span> <span class="sc">|</span> Team <span class="sc">==</span> <span class="st">"Los Angeles"</span>) <span class="sc">%&gt;%</span> <span class="fu">print</span>(<span class="at">width =</span> <span class="cn">Inf</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 0 × 20
+# ℹ 20 variables: Overall &lt;dbl&gt;, Round &lt;dbl&gt;, Pick &lt;dbl&gt;, Player &lt;chr&gt;, Position &lt;chr&gt;, Team &lt;chr&gt;, NFLCity &lt;chr&gt;, NFLState &lt;chr&gt;, NFLLatitude &lt;dbl&gt;, NFLLongitude &lt;dbl&gt;, College &lt;chr&gt;, Conference &lt;chr&gt;, AMCity &lt;chr&gt;, AMState &lt;chr&gt;, AMLatitude &lt;dbl&gt;, AMLongitude &lt;dbl&gt;, HTCity &lt;chr&gt;, HTState &lt;chr&gt;, HTLatitude &lt;dbl&gt;, HTLongitude &lt;dbl&gt;</code></pre>
+</div>
+</div>
+<p>Now that the teams are taken care of, the last thing to do is fill in any null values. As mentioned earlier, many of these null values will be the result of not every college in the draft data set being in the FBS. Any missing information will be added in manually using my own research. Once again, most of this data will come from Wikipedia. Once this is done, our data set will finally be tidy.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">mutate</span>(draft, <span class="at">HTState =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">35</span>, <span class="st">"NG"</span>, HTState), <span class="at">HTLatitude =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">35</span>, <span class="fl">6.455</span>, HTLatitude), <span class="at">HTLongitude =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">35</span>, <span class="fl">3.384</span>, HTLongitude))</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">mutate</span>(draft, <span class="at">HTLatitude =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">40</span>, <span class="fl">42.31</span>, HTLatitude), <span class="at">HTLongitude =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">40</span>, <span class="sc">-</span><span class="fl">95.251</span>, HTLongitude))</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">mutate</span>(draft, <span class="at">HTLatitude =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">71</span>, <span class="fl">43.858</span>, HTLatitude), <span class="at">HTLongitude =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">71</span>, <span class="sc">-</span><span class="fl">79.036</span>, HTLongitude))</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">mutate</span>(draft, <span class="at">AMCity =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">75</span>, <span class="st">"New Haven"</span>, AMCity), <span class="at">AMState =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">75</span>, <span class="st">"CT"</span>, AMState), <span class="at">AMLatitude =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">75</span>, <span class="fl">41.313</span>, AMLatitude), <span class="at">AMLongitude =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">75</span>, <span class="sc">-</span><span class="fl">72.96</span>, AMLongitude))</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">mutate</span>(draft, <span class="at">AMCity =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">94</span>, <span class="st">"Houston"</span>, AMCity), <span class="at">AMState =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">94</span>, <span class="st">"TX"</span>, AMState), <span class="at">AMLatitude =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">94</span>, <span class="fl">29.6925</span>, AMLatitude), <span class="at">AMLongitude =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">94</span>, <span class="sc">-</span><span class="fl">95.511</span>, AMLongitude))</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">mutate</span>(draft, <span class="at">HTLatitude =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">107</span>, <span class="fl">42.3</span>, HTLatitude), <span class="at">HTLongitude =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">107</span>, <span class="sc">-</span><span class="fl">82.994</span>, HTLongitude))</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">mutate</span>(draft, <span class="at">AMCity =</span> <span class="fu">ifelse</span>(College <span class="sc">==</span> <span class="st">"South Dakota State"</span>, <span class="st">"Brookings"</span>, AMCity), <span class="at">AMState =</span> <span class="fu">ifelse</span>(College <span class="sc">==</span> <span class="st">"South Dakota State"</span>, <span class="st">"SD"</span>, AMState), <span class="at">AMLatitude =</span> <span class="fu">ifelse</span>(College <span class="sc">==</span> <span class="st">"South Dakota State"</span>, <span class="fl">44.321</span>, AMLatitude), <span class="at">AMLongitude =</span> <span class="fu">ifelse</span>(College <span class="sc">==</span> <span class="st">"South Dakota State"</span>, <span class="sc">-</span><span class="fl">96.78</span>, AMLongitude))</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">mutate</span>(draft, <span class="at">HTLatitude =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">122</span>, <span class="sc">-</span><span class="fl">37.814</span>, HTLatitude), <span class="at">HTLongitude =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">122</span>, <span class="fl">144.963</span>, HTLongitude))</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">mutate</span>(draft, <span class="at">Conference =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">126</span>, <span class="st">"Canada West"</span>, Conference), <span class="at">AMCity =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">126</span>, <span class="st">"Vancouver"</span>, AMCity), <span class="at">AMState =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">126</span>, <span class="st">"BC"</span>, AMState), <span class="at">AMLatitude =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">126</span>, <span class="fl">49.2544</span>, AMLatitude), <span class="at">AMLongitude =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">126</span>, <span class="sc">-</span><span class="fl">123.2455</span>, AMLongitude), <span class="at">HTCity =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">126</span>, <span class="st">"Pitt Meadows"</span>, HTCity), <span class="at">HTState =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">126</span>, <span class="st">"BC"</span>, HTState), <span class="at">HTLatitude =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">126</span>, <span class="fl">49.233</span>, HTLatitude), <span class="at">HTLongitude =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">126</span>, <span class="sc">-</span><span class="fl">122.683</span>, HTLongitude))</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">mutate</span>(draft, <span class="at">HTLatitude =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">155</span>, <span class="fl">39.978</span>, HTLatitude), <span class="at">HTLongitude =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">155</span>, <span class="sc">-</span><span class="fl">74.836</span>, HTLongitude))</span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">mutate</span>(draft, <span class="at">Conference =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">176</span>, <span class="st">"CFL"</span>, Conference), <span class="at">AMCity =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">176</span>, <span class="st">"Toronto"</span>, AMCity), <span class="at">AMState =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">176</span>, <span class="st">"ON"</span>, AMState), <span class="at">AMLatitude =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">176</span>, <span class="fl">43.633</span>, AMLatitude), <span class="at">AMLongitude =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">176</span>, <span class="sc">-</span><span class="fl">79.419</span>, AMLongitude), <span class="at">HTCity =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">176</span>, <span class="st">"Atlanta"</span>, HTCity), <span class="at">HTState =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">176</span>, <span class="st">"GA"</span>, HTState), <span class="at">HTLatitude =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">176</span>, <span class="fl">33.749</span>, HTLatitude), <span class="at">HTLongitude =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">176</span>, <span class="sc">-</span><span class="fl">84.39</span>, HTLongitude))</span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">mutate</span>(draft, <span class="at">HTLatitude =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">194</span>, <span class="fl">49.694</span>, HTLatitude), <span class="at">HTLongitude =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">194</span>, <span class="sc">-</span><span class="fl">112.842</span>, HTLongitude))</span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">mutate</span>(draft, <span class="at">AMCity =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">199</span>, <span class="st">"Cedar Falls"</span>, AMCity), <span class="at">AMState =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">199</span>, <span class="st">"IA"</span>, AMState), <span class="at">AMLatitude =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">199</span>, <span class="fl">45.5156</span>, AMLatitude), <span class="at">AMLongitude =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">199</span>, <span class="sc">-</span><span class="fl">92.4673</span>, AMLongitude))</span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">mutate</span>(draft, <span class="at">AMCity =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">207</span>, <span class="st">"Findlay"</span>, AMCity), <span class="at">AMState =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">207</span>, <span class="st">"OH"</span>, AMState), <span class="at">AMLatitude =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">207</span>, <span class="fl">41.05</span>, AMLatitude), <span class="at">AMLongitude =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">207</span>, <span class="sc">-</span><span class="fl">83.756</span>, AMLongitude), <span class="at">HTCity =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">207</span>, <span class="st">"Indianapolis"</span>, HTCity), <span class="at">HTState =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">207</span>, <span class="st">"IN"</span>, HTState), <span class="at">HTLatitude =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">207</span>, <span class="fl">39.769</span>, HTLatitude), <span class="at">HTLongitude =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">207</span>, <span class="sc">-</span><span class="fl">86.158</span>, HTLongitude))</span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">mutate</span>(draft, <span class="at">AMCity =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">208</span>, <span class="st">"Durham"</span>, AMCity), <span class="at">AMState =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">208</span>, <span class="st">"NH"</span>, AMState), <span class="at">AMLatitude =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">208</span>, <span class="fl">43.139</span>, AMLatitude), <span class="at">AMLongitude =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">208</span>, <span class="sc">-</span><span class="fl">70.94</span>, AMLongitude), <span class="at">HTLatitude =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">208</span>, <span class="fl">40.823</span>, HTLatitude), <span class="at">HTLongitude =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">208</span>, <span class="sc">-</span><span class="fl">72.664</span>, HTLongitude))</span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">mutate</span>(draft, <span class="at">AMCity =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">216</span>, <span class="st">"Cape Girardeau"</span>, AMCity), <span class="at">AMState =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">216</span>, <span class="st">"MO"</span>, AMState), <span class="at">AMLatitude =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">216</span>, <span class="fl">37.3</span>, AMLatitude), <span class="at">AMLongitude =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">216</span>, <span class="sc">-</span><span class="fl">89.531</span>, AMLongitude))</span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">mutate</span>(draft, <span class="at">College =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">221</span>, <span class="st">"NFL Academy"</span>, College), <span class="at">Conference =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">221</span>, <span class="st">"IPP"</span>, Conference), <span class="at">AMCity =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">221</span>, <span class="st">"London"</span>, AMCity), <span class="at">AMState =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">221</span>, <span class="st">"ENG"</span>, AMState), <span class="at">AMLatitude =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">221</span>, <span class="fl">51.5</span>, AMLatitude), <span class="at">AMLongitude =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">221</span>, <span class="sc">-</span>.<span class="dv">133</span>, AMLongitude), <span class="at">HTCity =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">221</span>, <span class="st">"Basingstoke"</span>, HTCity), <span class="at">HTState =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">221</span>, <span class="st">"ENG"</span>, HTState), <span class="at">HTLatitude =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">221</span>, <span class="fl">51.2667</span>, HTLatitude), <span class="at">HTLongitude =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">221</span>, <span class="fl">1.0876</span>, HTLongitude))</span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">mutate</span>(draft, <span class="at">AMCity =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">227</span>, <span class="st">"Vermillion"</span>, AMCity), <span class="at">AMState =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">227</span>, <span class="st">"SD"</span>, AMState), <span class="at">AMLatitude =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">227</span>, <span class="fl">42.791</span>, AMLatitude), <span class="at">AMLongitude =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">227</span>, <span class="sc">-</span><span class="fl">96.928</span>, AMLongitude))</span>
+<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">mutate</span>(draft, <span class="at">College =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">232</span>, <span class="st">"East Texas A&amp;M"</span>, College), <span class="at">AMCity =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">232</span>, <span class="st">"Commerce"</span>, AMCity), <span class="at">AMState =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">232</span>, <span class="st">"TX"</span>, AMState), <span class="at">AMLatitude =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">232</span>, <span class="fl">33.246</span>, AMLatitude), <span class="at">AMLongitude =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">232</span>, <span class="sc">-</span><span class="fl">95.91</span>, AMLongitude), <span class="at">HTCity =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">232</span>, <span class="st">"Georgetown"</span>, HTCity), <span class="at">HTState =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">232</span>, <span class="st">"TX"</span>, HTState), <span class="at">HTLatitude =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">232</span>, <span class="fl">30.633</span>, HTLatitude), <span class="at">HTLongitude =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">232</span>, <span class="sc">-</span><span class="fl">97.677</span>, HTLongitude))</span>
+<span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">mutate</span>(draft, <span class="at">AMCity =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">239</span>, <span class="st">"Richmond"</span>, AMCity), <span class="at">AMState =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">239</span>, <span class="st">"KY"</span>, AMState), <span class="at">AMLatitude =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">239</span>, <span class="fl">37.734</span>, AMLatitude), <span class="at">AMLongitude =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">239</span>, <span class="sc">-</span><span class="fl">84.297</span>, AMLongitude))</span>
+<span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">mutate</span>(draft, <span class="at">AMCity =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">248</span>, <span class="st">"Worcester"</span>, AMCity), <span class="at">AMState =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">248</span>, <span class="st">"MA"</span>, AMState), <span class="at">AMLatitude =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">248</span>, <span class="fl">42.242</span>, AMLatitude), <span class="at">AMLongitude =</span> <span class="fu">ifelse</span>(Overall <span class="sc">==</span> <span class="dv">248</span>, <span class="sc">-</span><span class="fl">71.8</span>, AMLongitude))</span>
+<span id="cb27-22"><a href="#cb27-22" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(draft, <span class="fu">if_any</span>(<span class="fu">everything</span>(), is.na)) <span class="sc">%&gt;%</span> <span class="fu">print</span>(<span class="at">width =</span> <span class="cn">Inf</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 0 × 20
+# ℹ 20 variables: Overall &lt;dbl&gt;, Round &lt;dbl&gt;, Pick &lt;dbl&gt;, Player &lt;chr&gt;, Position &lt;chr&gt;, Team &lt;chr&gt;, NFLCity &lt;chr&gt;, NFLState &lt;chr&gt;, NFLLatitude &lt;dbl&gt;, NFLLongitude &lt;dbl&gt;, College &lt;chr&gt;, Conference &lt;chr&gt;, AMCity &lt;chr&gt;, AMState &lt;chr&gt;, AMLatitude &lt;dbl&gt;, AMLongitude &lt;dbl&gt;, HTCity &lt;chr&gt;, HTState &lt;chr&gt;, HTLatitude &lt;dbl&gt;, HTLongitude &lt;dbl&gt;</code></pre>
+</div>
+</div>
+</section>
+<section id="analysis-of-states" class="level1">
+<h1>Analysis of States</h1>
+<p>Now that the data set has been tidied, we can finally start our analysis on geography’s impact on the NFL draft. The first thing to look at is whether teams tend to look within their own states for draft prospects. We will start off by looking at how many players were drafted by teams in the same state as the college they were drafted out of.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(draft, NFLState <span class="sc">==</span> AMState) <span class="sc">%&gt;%</span> <span class="fu">print</span>(<span class="at">width =</span> <span class="cn">Inf</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 7 × 20
+  Overall Round  Pick Player           Position         Team         
+    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;            &lt;chr&gt;            &lt;chr&gt;        
+1      54     2    22 Michael Hall Jr. Defensive Tackle Cleveland    
+2      96     3    33 Jarrian Jones    Cornerback       Jacksonville 
+3     197     6    21 Zion Logue       Defensive Tackle Atlanta      
+4     209     6    33 Joshua Karty     Place Kicker     LAR          
+5     215     6    39 Jarrett Kingston Offensive Guard  San Francisco
+6     225     7     5 Brenden Rice     Wide Receiver    LAC          
+7     243     7    23 Jowon Briggs     Defensive Tackle Cleveland    
+  NFLCity      NFLState NFLLatitude NFLLongitude College       Conference
+  &lt;chr&gt;        &lt;chr&gt;          &lt;dbl&gt;        &lt;dbl&gt; &lt;chr&gt;         &lt;chr&gt;     
+1 Cleveland    OH              41.5        -81.7 Ohio State    Big Ten   
+2 Jacksonville FL              30.3        -81.6 Florida State ACC       
+3 Atlanta      GA              33.8        -84.4 Georgia       SEC       
+4 Inglewood    CA              34.0       -118.  Stanford      Pac-12    
+5 Santa Clara  CA              37.4       -122.  USC           Pac-12    
+6 Inglewood    CA              34.0       -118.  USC           Pac-12    
+7 Cleveland    OH              41.5        -81.7 Cincinnati    Big 12    
+  AMCity      AMState AMLatitude AMLongitude HTCity      HTState HTLatitude
+  &lt;chr&gt;       &lt;chr&gt;        &lt;dbl&gt;       &lt;dbl&gt; &lt;chr&gt;       &lt;chr&gt;        &lt;dbl&gt;
+1 Columbus    OH            40.0       -83.0 Streetsboro OH            41.2
+2 Tallahassee FL            30.4       -84.3 Brandon     MS            32.3
+3 Athens      GA            33.9       -83.4 Lebanon     TN            36.2
+4 Stanford    CA            37.4      -122.  Burlington  NC            36.1
+5 Los Angeles CA            34.0      -118.  Anderson    CA            40.4
+6 Los Angeles CA            34.0      -118.  Chandler    AZ            33.3
+7 Cincinnati  OH            39.1       -84.5 Cincinnati  OH            39.1
+  HTLongitude
+        &lt;dbl&gt;
+1       -81.3
+2       -90.0
+3       -86.3
+4       -79.4
+5      -122. 
+6      -112. 
+7       -84.5</code></pre>
+</div>
+</div>
+<p>As can be seen, only seven players were drafted by teams in the same state as their alma mater. This is certainly surprising as it accounts for under 3% of the 257 draft picks from this year. Furthermore, five of these seven players were drafted in the last two rounds. This could possibly show that geography plays more of an impact in the later rounds of the draft. Another interesting thing to note is that the Cleveland Browns are the only team on this list twice. We will now look at how many players were drafted by teams in the same state as their hometowns.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(draft, NFLState <span class="sc">==</span> HTState) <span class="sc">%&gt;%</span> <span class="fu">print</span>(<span class="at">width =</span> <span class="cn">Inf</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 10 × 20
+   Overall Round  Pick Player             Position         Team         
+     &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;              &lt;chr&gt;            &lt;chr&gt;        
+ 1      29     1    29 Tyler Guyton       Offensive Tackle Dallas       
+ 2      54     2    22 Michael Hall Jr.   Defensive Tackle Cleveland    
+ 3      75     3    11 Kiran Amegadjie    Offensive Tackle Chicago      
+ 4     115     4    15 Erick All          Tight End        Cincinnati   
+ 5     116     4    16 Jordan Jefferson   Defensive Tackle Jacksonville 
+ 6     143     5     8 JD Bertrand        Linebacker       Atlanta      
+ 7     154     5    19 Brennan Jackson    Defensive Edge   LAR          
+ 8     215     6    39 Jarrett Kingston   Offensive Guard  San Francisco
+ 9     243     7    23 Jowon Briggs       Defensive Tackle Cleveland    
+10     249     7    29 LaDarius Henderson Offensive Tackle Houston      
+   NFLCity      NFLState NFLLatitude NFLLongitude College         
+   &lt;chr&gt;        &lt;chr&gt;          &lt;dbl&gt;        &lt;dbl&gt; &lt;chr&gt;           
+ 1 Arlington    TX              32.7        -97.1 Oklahoma        
+ 2 Cleveland    OH              41.5        -81.7 Ohio State      
+ 3 Chicago      IL              41.9        -87.6 Yale            
+ 4 Cincinnati   OH              39.1        -84.5 Iowa            
+ 5 Jacksonville FL              30.3        -81.6 LSU             
+ 6 Atlanta      GA              33.8        -84.4 Notre Dame      
+ 7 Inglewood    CA              34.0       -118.  Washington State
+ 8 Santa Clara  CA              37.4       -122.  USC             
+ 9 Cleveland    OH              41.5        -81.7 Cincinnati      
+10 Houston      TX              29.7        -95.4 Michigan        
+   Conference       AMCity      AMState AMLatitude AMLongitude HTCity     
+   &lt;chr&gt;            &lt;chr&gt;       &lt;chr&gt;        &lt;dbl&gt;       &lt;dbl&gt; &lt;chr&gt;      
+ 1 Big 12           Norman      OK            35.2       -97.4 Manor      
+ 2 Big Ten          Columbus    OH            40.0       -83.0 Streetsboro
+ 3 Ivy              New Haven   CT            41.3       -73.0 Hinsdale   
+ 4 Big Ten          Iowa City   IA            41.7       -91.6 Fairfield  
+ 5 SEC              Baton Rouge LA            30.4       -91.2 Navarre    
+ 6 FBS Independents Notre Dame  IN            41.7       -86.2 Roswell    
+ 7 Pac-12           Pullman     WA            46.7      -117.  Temecula   
+ 8 Pac-12           Los Angeles CA            34.0      -118.  Anderson   
+ 9 Big 12           Cincinnati  OH            39.1       -84.5 Cincinnati 
+10 Big Ten          Ann Arbor   MI            42.3       -83.7 Waxahachie 
+   HTState HTLatitude HTLongitude
+   &lt;chr&gt;        &lt;dbl&gt;       &lt;dbl&gt;
+ 1 TX            30.3       -97.6
+ 2 OH            41.2       -81.3
+ 3 IL            41.8       -87.9
+ 4 OH            39.3       -84.6
+ 5 FL            30.4       -86.9
+ 6 GA            34.0       -84.4
+ 7 CA            33.5      -117. 
+ 8 CA            40.4      -122. 
+ 9 OH            39.1       -84.5
+10 TX            32.4       -96.8</code></pre>
+</div>
+</div>
+<p>As can be seen, there are slightly more players on this list with ten. However, this is still under 4% of the 257 draft picks from this year. Unlike the previous list, these players are much more spread out in the draft order with the second round being the only one not on this list. Once again, the Cleveland Browns are the only team to appear on this list twice. This may show that the Browns focus more on nearby players than other teams. However, it is clear that we will not get the full story from just looking at states.</p>
+</section>
+<section id="creating-distance-variables" class="level1">
+<h1>Creating Distance Variables</h1>
+<p>While looking at states could be useful, there is more to geography than states. If we really want to get the full picture of how geography impacts the NFL draft, we need to look at the actual distance between NFL teams, alma maters, and hometowns. Therefore, it would be best to make two new columns: AMDistance and HTDistance. These columns will show how far away each player’s alma mater and hometown are from the NFL team that drafted them. This information will be calculated using the distGeo function. Since this function returns the result in meters, I will divide by 1609.34 to convert it to miles. I will then rearrange these columns to keep the alma mater and hometown geography columns together.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> draft <span class="sc">%&gt;%</span> <span class="fu">rowwise</span>() <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">AMDistance =</span> <span class="fu">distGeo</span>(<span class="fu">c</span>(NFLLongitude, NFLLatitude), <span class="fu">c</span>(AMLongitude, AMLatitude)) <span class="sc">/</span> <span class="fl">1609.34</span>, <span class="at">HTDistance =</span> <span class="fu">distGeo</span>(<span class="fu">c</span>(NFLLongitude, NFLLatitude), <span class="fu">c</span>(HTLongitude, HTLatitude)) <span class="sc">/</span> <span class="fl">1609.34</span>) <span class="sc">%&gt;%</span> <span class="fu">ungroup</span>()</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>draft <span class="ot">&lt;-</span> <span class="fu">select</span>(draft, Overall, Round, Pick, Player, Position, Team, NFLCity, NFLState, NFLLatitude, NFLLongitude, College, Conference, AMCity, AMState, AMLatitude, AMLongitude, AMDistance, HTCity, HTState, HTLatitude, HTLongitude, HTDistance)</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>draft <span class="sc">%&gt;%</span> <span class="fu">print</span>(<span class="at">width =</span> <span class="cn">Inf</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 257 × 22
+   Overall Round  Pick Player              Position         Team       
+     &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;               &lt;chr&gt;            &lt;chr&gt;      
+ 1       1     1     1 Caleb Williams      Quarterback      Chicago    
+ 2       2     1     2 Jayden Daniels      Quarterback      Washington 
+ 3       3     1     3 Drake Maye          Quarterback      New England
+ 4       4     1     4 Marvin Harrison Jr. Wide Receiver    Arizona    
+ 5       5     1     5 Joe Alt             Offensive Tackle LAC        
+ 6       6     1     6 Malik Nabers        Wide Receiver    NYG        
+ 7       7     1     7 JC Latham           Offensive Tackle Tennessee  
+ 8       8     1     8 Michael Penix Jr.   Quarterback      Atlanta    
+ 9       9     1     9 Rome Odunze         Wide Receiver    Chicago    
+10      10     1    10 J.J. McCarthy       Quarterback      Minnesota  
+   NFLCity         NFLState NFLLatitude NFLLongitude College       
+   &lt;chr&gt;           &lt;chr&gt;          &lt;dbl&gt;        &lt;dbl&gt; &lt;chr&gt;         
+ 1 Chicago         IL              41.9        -87.6 USC           
+ 2 Landover        MD              38.9        -76.9 LSU           
+ 3 Foxborough      MA              42.1        -71.3 North Carolina
+ 4 Glendale        AZ              33.5       -112.  Ohio State    
+ 5 Inglewood       CA              34.0       -118.  Notre Dame    
+ 6 East Rutherford NJ              40.8        -74.1 LSU           
+ 7 Nashville       TN              36.2        -86.8 Alabama       
+ 8 Atlanta         GA              33.8        -84.4 Washington    
+ 9 Chicago         IL              41.9        -87.6 Washington    
+10 Minneapolis     MN              45.0        -93.3 Michigan      
+   Conference       AMCity      AMState AMLatitude AMLongitude AMDistance
+   &lt;chr&gt;            &lt;chr&gt;       &lt;chr&gt;        &lt;dbl&gt;       &lt;dbl&gt;      &lt;dbl&gt;
+ 1 Pac-12           Los Angeles CA            34.0      -118.       1750.
+ 2 SEC              Baton Rouge LA            30.4       -91.2      1002.
+ 3 ACC              Chapel Hill NC            35.9       -79.0       597.
+ 4 Big Ten          Columbus    OH            40.0       -83.0      1674.
+ 5 FBS Independents Notre Dame  IN            41.7       -86.2      1824.
+ 6 SEC              Baton Rouge LA            30.4       -91.2      1197.
+ 7 SEC              Tuscaloosa  AL            33.2       -87.6       209.
+ 8 Pac-12           Seattle     WA            47.7      -122.       2181.
+ 9 Pac-12           Seattle     WA            47.7      -122.       1737.
+10 Big Ten          Ann Arbor   MI            42.3       -83.7       512.
+   HTCity         HTState HTLatitude HTLongitude HTDistance
+   &lt;chr&gt;          &lt;chr&gt;        &lt;dbl&gt;       &lt;dbl&gt;      &lt;dbl&gt;
+ 1 Washington     DC            38.9       -77.0       594.
+ 2 San Bernardino CA            34.1      -117.       2256.
+ 3 Charlotte      NC            35.2       -80.8       701.
+ 4 Philadelphia   PA            40.0       -75.2      2090.
+ 5 North Oaks     MN            45.1       -93.1      1544.
+ 6 Youngsville    LA            30.1       -92.0      1248.
+ 7 Oak Creek      WI            42.9       -87.9       467.
+ 8 Tampa          FL            27.9       -82.5       416.
+ 9 Las Vegas      NV            36.2      -115.       1526.
+10 La Grange Park IL            41.8       -87.9       347.
+# ℹ 247 more rows</code></pre>
+</div>
+</div>
+</section>
+<section id="checking-the-extremities" class="level1">
+<h1>Checking the Extremities</h1>
+<p>Now that the distance variables have been created, it would be a good idea to look at the highest and lowest values of each of these variables. Not only will this give us something interesting to look at, but it will also ensure that everything has been implemented correctly so far. First of all, we will look at the ten players who were drafted by teams closest to their alma maters.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">arrange</span>(draft, AMDistance) <span class="sc">%&gt;%</span> <span class="fu">print</span>(<span class="at">width =</span> <span class="cn">Inf</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 257 × 22
+   Overall Round  Pick Player           Position         Team       NFLCity     
+     &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;            &lt;chr&gt;            &lt;chr&gt;      &lt;chr&gt;       
+ 1     225     7     5 Brenden Rice     Wide Receiver    LAC        Inglewood   
+ 2      51     2    19 Zach Frazier     Center           Pittsburgh Pittsburgh  
+ 3     197     6    21 Zion Logue       Defensive Tackle Atlanta    Atlanta     
+ 4      32     1    32 Xavier Legette   Wide Receiver    Carolina   Charlotte   
+ 5      35     2     3 Ruke Orhorhoro   Defensive Tackle Atlanta    Atlanta     
+ 6     139     5     4 Jordan Magee     Linebacker       Washington Landover    
+ 7      85     3    21 Zak Zinter       Offensive Guard  Cleveland  Cleveland   
+ 8      93     3    30 Adisa Isaac      Linebacker       Baltimore  Baltimore   
+ 9      54     2    22 Michael Hall Jr. Defensive Tackle Cleveland  Cleveland   
+10     219     6    43 Daequan Hardy    Cornerback       Buffalo    Orchard Park
+   NFLState NFLLatitude NFLLongitude College        Conference       
+   &lt;chr&gt;          &lt;dbl&gt;        &lt;dbl&gt; &lt;chr&gt;          &lt;chr&gt;            
+ 1 CA              34.0       -118.  USC            Pac-12           
+ 2 PA              40.4        -80.0 West Virginia  Big 12           
+ 3 GA              33.8        -84.4 Georgia        SEC              
+ 4 NC              35.2        -80.9 South Carolina SEC              
+ 5 GA              33.8        -84.4 Clemson        ACC              
+ 6 MD              38.9        -76.9 Temple         American Athletic
+ 7 OH              41.5        -81.7 Michigan       Big Ten          
+ 8 MD              39.3        -76.6 Penn State     Big Ten          
+ 9 OH              41.5        -81.7 Ohio State     Big Ten          
+10 NY              42.8        -78.8 Penn State     Big Ten          
+   AMCity          AMState AMLatitude AMLongitude AMDistance HTCity       
+   &lt;chr&gt;           &lt;chr&gt;        &lt;dbl&gt;       &lt;dbl&gt;      &lt;dbl&gt; &lt;chr&gt;        
+ 1 Los Angeles     CA            34.0      -118.        5.14 Chandler     
+ 2 Morgantown      WV            39.7       -80.0      55.1  Fairmont     
+ 3 Athens          GA            33.9       -83.4      60.5  Lebanon      
+ 4 Columbia        SC            34.0       -81.0      86.9  Mullins      
+ 5 Clemson         SC            34.7       -82.8     110.   Lagos        
+ 6 Philadelphia    PA            39.9       -75.2     114.   Dover        
+ 7 Ann Arbor       MI            42.3       -83.7     118.   North Andover
+ 8 University Park PA            40.8       -77.9     124.   Brooklyn     
+ 9 Columbus        OH            40.0       -83.0     124.   Streetsboro  
+10 University Park PA            40.8       -77.9     144.   Pittsburgh   
+   HTState HTLatitude HTLongitude HTDistance
+   &lt;chr&gt;        &lt;dbl&gt;       &lt;dbl&gt;      &lt;dbl&gt;
+ 1 AZ           33.3      -112.        377. 
+ 2 WV           39.5       -80.1        66.7
+ 3 TN           36.2       -86.3       200. 
+ 4 SC           34.2       -79.3       115. 
+ 5 NG            6.46        3.38     5849. 
+ 6 DE           39.2       -75.5        74.2
+ 7 MA           42.7       -71.1       550. 
+ 8 NY           40.7       -73.9       171. 
+ 9 OH           41.2       -81.3        25.7
+10 PA           40.4       -80.0       173. 
+# ℹ 247 more rows</code></pre>
+</div>
+</div>
+<p>As can be seen, Brendan Rice has by far the shortest distance between his alma mater and the team who drafted him. In fact, he did not even have to leave Los Angeles County to go from USC to the Los Angeles Chargers. He was drafted in the seventh round which does lend some credibility to the claim that geography may play more of an impact in the later rounds although the rest of this list does not do much to support that claim. Besides Rice, only three other players have a distance from their alma mater to their NFL team of under 100 miles. Once again, the Cleveland Browns appear on this list twice as do the Atlanta Falcons. We will now look to the opposite end of the spectrum at the ten players who were drafted by teams furthest from their alma mater.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">arrange</span>(draft, <span class="fu">desc</span>(AMDistance)) <span class="sc">%&gt;%</span> <span class="fu">print</span>(<span class="at">width =</span> <span class="cn">Inf</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 257 × 22
+   Overall Round  Pick Player           Position        Team       
+     &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;            &lt;chr&gt;           &lt;chr&gt;      
+ 1     221     7     1 Travis Clayton   Offensive Guard Buffalo    
+ 2     198     6    22 Patrick McMorris Safety          Miami      
+ 3      92     3    29 Jalen McMillan   Wide Receiver   Tampa Bay  
+ 4     246     7    26 Devin Culp       Tight End       Tampa Bay  
+ 5     125     4    25 Bucky Irving     Running Back    Tampa Bay  
+ 6      37     2     5 Ja'Lynn Polk     Wide Receiver   New England
+ 7     183     6     7 Darius Muasau    Linebacker      NYG        
+ 8      81     3    17 Christian Haynes Offensive Guard Seattle    
+ 9     208     6    32 Dylan Laube      Running Back    Las Vegas  
+10      99     3    36 Kamren Kinchens  Safety          LAR        
+   NFLCity         NFLState NFLLatitude NFLLongitude College      
+   &lt;chr&gt;           &lt;chr&gt;          &lt;dbl&gt;        &lt;dbl&gt; &lt;chr&gt;        
+ 1 Orchard Park    NY              42.8        -78.8 NFL Academy  
+ 2 Miami Gardens   FL              26.0        -80.2 California   
+ 3 Tampa           FL              28.0        -82.5 Washington   
+ 4 Tampa           FL              28.0        -82.5 Washington   
+ 5 Tampa           FL              28.0        -82.5 Oregon       
+ 6 Foxborough      MA              42.1        -71.3 Washington   
+ 7 East Rutherford NJ              40.8        -74.1 UCLA         
+ 8 Seattle         WA              47.6       -122.  UConn        
+ 9 Paradise        NV              36.1       -115.  New Hampshire
+10 Inglewood       CA              34.0       -118.  Miami        
+   Conference       AMCity        AMState AMLatitude AMLongitude AMDistance
+   &lt;chr&gt;            &lt;chr&gt;         &lt;chr&gt;        &lt;dbl&gt;       &lt;dbl&gt;      &lt;dbl&gt;
+ 1 IPP              London        ENG           51.5      -0.133      3574.
+ 2 Pac-12           Berkeley      CA            37.9    -122.         2577.
+ 3 Pac-12           Seattle       WA            47.7    -122.         2526.
+ 4 Pac-12           Seattle       WA            47.7    -122.         2526.
+ 5 Pac-12           Eugene        OR            44.1    -123.         2496.
+ 6 Pac-12           Seattle       WA            47.7    -122.         2489.
+ 7 Pac-12           Pasadena      CA            34.2    -118.         2440.
+ 8 FBS Independents East Hartford CT            41.8     -72.6        2439.
+ 9 CAA              Durham        NH            43.1     -70.9        2382.
+10 ACC              Miami Gardens FL            26.0     -80.2        2337.
+   HTCity             HTState HTLatitude HTLongitude HTDistance
+   &lt;chr&gt;              &lt;chr&gt;        &lt;dbl&gt;       &lt;dbl&gt;      &lt;dbl&gt;
+ 1 Basingstoke        ENG           51.3        1.09      3629.
+ 2 Santa Ana          CA            33.7     -118.        2309.
+ 3 Fresno             CA            36.7     -120.        2243.
+ 4 Spokane            WA            47.7     -117.        2313.
+ 5 Country Club Hills IL            41.6      -87.7        982.
+ 6 Lufkin             TX            31.3      -94.7       1492.
+ 7 Ewa Beach          HI            21.3     -158.        4970.
+ 8 Bowie              MD            38.9      -76.7       2340.
+ 9 Westhampton        NY            40.8      -72.7       2306.
+10 Miami              FL            25.8      -80.2       2344.
+# ℹ 247 more rows</code></pre>
+</div>
+</div>
+<p>As can be seen, Travis Clayton has by far the longest distance between his alma mater and the team who drafted him. This makes sense as he actually did not play college football. Instead, his alma mater is listed as the NFL Academy in London. He was the only player in the draft whose alma mater is not in North America, so he would obviously be at the top of this list. Besides Clayton, the rest of the players on this list are players who played for a college on one side of the country before being drafted by a team on the opposite side of the country. These players are spread out in the draft order with the picks ranging from the second round to the seventh round. The Tampa Bay Buccaneers appear on this list three times which makes sense as they are on the east coast and drafted several players from schools on the west coast. We will now look at the ten players who were drafted by teams closest to their hometowns.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">arrange</span>(draft, HTDistance) <span class="sc">%&gt;%</span> <span class="fu">print</span>(<span class="at">width =</span> <span class="cn">Inf</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 257 × 22
+   Overall Round  Pick Player               Position         Team        
+     &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;                &lt;chr&gt;            &lt;chr&gt;       
+ 1      75     3    11 Kiran Amegadjie      Offensive Tackle Chicago     
+ 2     115     4    15 Erick All            Tight End        Cincinnati  
+ 3     155     5    20 Jeremiah Trotter Jr. Linebacker       Philadelphia
+ 4     143     5     8 JD Bertrand          Linebacker       Atlanta     
+ 5      54     2    22 Michael Hall Jr.     Defensive Tackle Cleveland   
+ 6      51     2    19 Zach Frazier         Center           Pittsburgh  
+ 7     139     5     4 Jordan Magee         Linebacker       Washington  
+ 8     154     5    19 Brennan Jackson      Defensive Edge   LAR         
+ 9     218     6    42 Devin Leary          Quarterback      Baltimore   
+10      32     1    32 Xavier Legette       Wide Receiver    Carolina    
+   NFLCity      NFLState NFLLatitude NFLLongitude College         
+   &lt;chr&gt;        &lt;chr&gt;          &lt;dbl&gt;        &lt;dbl&gt; &lt;chr&gt;           
+ 1 Chicago      IL              41.9        -87.6 Yale            
+ 2 Cincinnati   OH              39.1        -84.5 Iowa            
+ 3 Philadelphia PA              39.9        -75.2 Clemson         
+ 4 Atlanta      GA              33.8        -84.4 Notre Dame      
+ 5 Cleveland    OH              41.5        -81.7 Ohio State      
+ 6 Pittsburgh   PA              40.4        -80.0 West Virginia   
+ 7 Landover     MD              38.9        -76.9 Temple          
+ 8 Inglewood    CA              34.0       -118.  Washington State
+ 9 Baltimore    MD              39.3        -76.6 Kentucky        
+10 Charlotte    NC              35.2        -80.9 South Carolina  
+   Conference        AMCity       AMState AMLatitude AMLongitude AMDistance
+   &lt;chr&gt;             &lt;chr&gt;        &lt;chr&gt;        &lt;dbl&gt;       &lt;dbl&gt;      &lt;dbl&gt;
+ 1 Ivy               New Haven    CT            41.3       -73.0      759. 
+ 2 Big Ten           Iowa City    IA            41.7       -91.6      411. 
+ 3 ACC               Clemson      SC            34.7       -82.8      555. 
+ 4 FBS Independents  Notre Dame   IN            41.7       -86.2      557. 
+ 5 Big Ten           Columbus     OH            40.0       -83.0      124. 
+ 6 Big 12            Morgantown   WV            39.7       -80.0       55.1
+ 7 American Athletic Philadelphia PA            39.9       -75.2      114. 
+ 8 Pac-12            Pullman      WA            46.7      -117.       884. 
+ 9 SEC               Lexington    KY            38.0       -84.5      435. 
+10 SEC               Columbia     SC            34.0       -81.0       86.9
+   HTCity       HTState HTLatitude HTLongitude HTDistance
+   &lt;chr&gt;        &lt;chr&gt;        &lt;dbl&gt;       &lt;dbl&gt;      &lt;dbl&gt;
+ 1 Hinsdale     IL            41.8       -87.9       16.7
+ 2 Fairfield    OH            39.3       -84.6       17.5
+ 3 Hainesport   NJ            40.0       -74.8       18.4
+ 4 Roswell      GA            34.0       -84.4       18.6
+ 5 Streetsboro  OH            41.2       -81.3       25.7
+ 6 Fairmont     WV            39.5       -80.1       66.7
+ 7 Dover        DE            39.2       -75.5       74.2
+ 8 Temecula     CA            33.5      -117.        75.5
+ 9 Sicklerville NJ            39.7       -75.0       93.4
+10 Mullins      SC            34.2       -79.3      115. 
+# ℹ 247 more rows</code></pre>
+</div>
+</div>
+<p>As can be seen, this list has much shorter distances than the one based on alma maters. Nine players on this list have a distance from their hometown to their NFL teams of under 100 miles, and five of them are from a suburb of the city where their NFL team plays. Once again, these players are spread out in the draft order with the last round being the only one not on this list. The fact that the last round is not on here could be evidence against the claim that geography plays more of an impact in later rounds. No team appears on this list more than once, but the Cleveland Browns and Atlanta Falcons each appear again after being on the closest alma maters list twice. Finally, we will look at the the opposite end of the spectrum at the ten players who were drafted by teams furthest from their hometown.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">arrange</span>(draft, <span class="fu">desc</span>(HTDistance)) <span class="sc">%&gt;%</span> <span class="fu">print</span>(<span class="at">width =</span> <span class="cn">Inf</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 257 × 22
+   Overall Round  Pick Player            Position         Team         
+     &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;             &lt;chr&gt;            &lt;chr&gt;        
+ 1     122     4    22 Tory Taylor       Punter           Chicago      
+ 2      35     2     3 Ruke Orhorhoro    Defensive Tackle Atlanta      
+ 3     183     6     7 Darius Muasau     Linebacker       NYG          
+ 4      84     3    20 Roman Wilson      Wide Receiver    Pittsburgh   
+ 5      87     3    24 Marist Liufau     Linebacker       Dallas       
+ 6     221     7     1 Travis Clayton    Offensive Guard  Buffalo      
+ 7     160     5    25 Edefuan Ulofoshio Linebacker       Buffalo      
+ 8     251     7    31 Tatum Bethune     Linebacker       San Francisco
+ 9     118     4    18 Tyrice Knight     Linebacker       Seattle      
+10     253     7    33 Cornelius Johnson Wide Receiver    LAC          
+   NFLCity         NFLState NFLLatitude NFLLongitude College      
+   &lt;chr&gt;           &lt;chr&gt;          &lt;dbl&gt;        &lt;dbl&gt; &lt;chr&gt;        
+ 1 Chicago         IL              41.9        -87.6 Iowa         
+ 2 Atlanta         GA              33.8        -84.4 Clemson      
+ 3 East Rutherford NJ              40.8        -74.1 UCLA         
+ 4 Pittsburgh      PA              40.4        -80.0 Michigan     
+ 5 Arlington       TX              32.7        -97.1 Notre Dame   
+ 6 Orchard Park    NY              42.8        -78.8 NFL Academy  
+ 7 Orchard Park    NY              42.8        -78.8 Washington   
+ 8 Santa Clara     CA              37.4       -122.  Florida State
+ 9 Seattle         WA              47.6       -122.  UTEP         
+10 Inglewood       CA              34.0       -118.  Michigan     
+   Conference       AMCity      AMState AMLatitude AMLongitude AMDistance
+   &lt;chr&gt;            &lt;chr&gt;       &lt;chr&gt;        &lt;dbl&gt;       &lt;dbl&gt;      &lt;dbl&gt;
+ 1 Big Ten          Iowa City   IA            41.7     -91.6         204.
+ 2 ACC              Clemson     SC            34.7     -82.8         110.
+ 3 Pac-12           Pasadena    CA            34.2    -118.         2440.
+ 4 Big Ten          Ann Arbor   MI            42.3     -83.7         231.
+ 5 FBS Independents Notre Dame  IN            41.7     -86.2         859.
+ 6 IPP              London      ENG           51.5      -0.133      3574.
+ 7 Pac-12           Seattle     WA            47.7    -122.         2122.
+ 8 ACC              Tallahassee FL            30.4     -84.3        2202.
+ 9 Conference USA   El Paso     TX            31.8    -107.         1374.
+10 Big Ten          Ann Arbor   MI            42.3     -83.7        1955.
+   HTCity      HTState HTLatitude HTLongitude HTDistance
+   &lt;chr&gt;       &lt;chr&gt;        &lt;dbl&gt;       &lt;dbl&gt;      &lt;dbl&gt;
+ 1 Melbourne   VIC         -37.8       145.        9674.
+ 2 Lagos       NG            6.46        3.38      5849.
+ 3 Ewa Beach   HI           21.3      -158.        4970.
+ 4 Honolulu    HI           21.3      -158.        4661.
+ 5 Kalihi      HI           21.3      -158.        3779.
+ 6 Basingstoke ENG          51.3         1.09      3629.
+ 7 Anchorage   AK           61.2      -150.        3103.
+ 8 Miami       FL           25.8       -80.2       2567.
+ 9 Lakeland    FL           28.0       -81.9       2547.
+10 Greenwich   CT           41.0       -73.6       2477.
+# ℹ 247 more rows</code></pre>
+</div>
+</div>
+<p>As can be seen, Tory Taylor has by far the longest distance between his hometown and the team who drafted him. This makes sense as he is from Australia. It is not surprising that the only Australian player drafted is a punter as many Australian rules football players have transitioned into being punters in American football. Interestingly, he was drafted by the Chicago Bears who were also on top of the previous list. The next six players are also from overseas. The second player is from Nigeria, the next three are from Hawaii, and the sixth is from England. The next player on this list is from Alaska which makes sense as it is separate from the rest of the United States despite not technically being overseas. The last three players on this list are players from the east coast who were drafted by teams on the west coast. As has been a trend in these lists, these players are spread out in the draft order with the first round being the only one not on this list. This could show that the previous theory that geography plays more of an impact in later rounds could be false. The Buffalo Bills are the only team to appear on this list twice which is interesting to note as they were also on top of the furthest alma maters list.</p>
+</section>
+<section id="linear-models" class="level1">
+<h1>Linear Models</h1>
+<p>While looking at the extremities seems to show that geography does not play more of an impact in later rounds, these extremities do not provide conclusive evidence. The best way to test this claim is to use a linear model. We will start by looking at a linear model that predicts how far away a player’s alma mater will be from the team that drafts him based on where in the draft the player is picked.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>mod <span class="ot">&lt;-</span> <span class="fu">lm</span>(AMDistance <span class="sc">~</span> Overall, <span class="at">data =</span> draft)</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>grid <span class="ot">&lt;-</span> draft <span class="sc">%&gt;%</span> <span class="fu">data_grid</span>(Overall) <span class="sc">%&gt;%</span> <span class="fu">add_predictions</span>(mod)</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> draft) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> Overall, <span class="at">y =</span> AMDistance)) <span class="sc">+</span> <span class="fu">geom_line</span>(<span class="at">data =</span> grid, <span class="fu">aes</span>(<span class="at">x =</span> Overall, <span class="at">y =</span> pred))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="ds6_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>As can be seen, the distance between a player’s alma mater and the team that drafts him does not change much throughout the draft. The average does seem to get a bit lower later on in the draft, but it is not enough to say there is a definitive correlation. For the most part, it seems to remain rather steady. We will now look at another linear model that predicts how far away a player’s hometown will be from the team that drafts him based on where in the draft the player is picked.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>mod <span class="ot">&lt;-</span> <span class="fu">lm</span>(HTDistance <span class="sc">~</span> Overall, <span class="at">data =</span> draft)</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>grid <span class="ot">&lt;-</span> draft <span class="sc">%&gt;%</span> <span class="fu">data_grid</span>(Overall) <span class="sc">%&gt;%</span> <span class="fu">add_predictions</span>(mod)</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> draft) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> Overall, <span class="at">y =</span> HTDistance)) <span class="sc">+</span> <span class="fu">geom_line</span>(<span class="at">data =</span> grid, <span class="fu">aes</span>(<span class="at">x =</span> Overall, <span class="at">y =</span> pred))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="ds6_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>As can be seen, the trend of this linear model is very similar to the previous one. There is a slight downward trend, but it seems to remain mostly steady. There are more outliers in this plot than the previous one, but these outliers are spread out enough to where they do not seem to affect the trend too much. Based on these two linear models, it is safe to say that geography does not play any more of an impact in the later rounds of the NFL draft than it does in the earlier ones.</p>
+</section>
+<section id="individual-teams" class="level1">
+<h1>Individual Teams</h1>
+<p>So far, it does not seem like geography has much of an impact on the NFL draft, but there is still more data to look at. As has been mentioned, it seems some teams may focus more on nearby players than other teams. To see if there is any truth to this, we will calculate the average distances for each team to their players’ alma maters and hometowns. We will start off by looking at which teams tend to draft players from the closest colleges.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">arrange</span>(<span class="fu">summarise</span>(<span class="fu">group_by</span>(draft, Team), <span class="at">AMAvg =</span> <span class="fu">mean</span>(AMDistance)), AMAvg) <span class="sc">%&gt;%</span> <span class="fu">print</span>(<span class="at">n =</span> <span class="dv">32</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 32 × 2
+   Team          AMAvg
+   &lt;chr&gt;         &lt;dbl&gt;
+ 1 Cleveland      373.
+ 2 Tennessee      467.
+ 3 Dallas         616.
+ 4 Cincinnati     652.
+ 5 Baltimore      654.
+ 6 Jacksonville   695.
+ 7 NYJ            723.
+ 8 Philadelphia   754.
+ 9 Indianapolis   778.
+10 Carolina       780.
+11 Pittsburgh     782.
+12 Denver         820.
+13 Kansas City    856.
+14 New Orleans    861.
+15 Minnesota      880.
+16 Washington     949.
+17 Chicago        980.
+18 Atlanta        992.
+19 NYG           1019.
+20 Detroit       1038.
+21 Houston       1090.
+22 New England   1097.
+23 Green Bay     1099.
+24 Buffalo       1186.
+25 Miami         1459.
+26 Tampa Bay     1498.
+27 Arizona       1529.
+28 LAR           1538.
+29 Las Vegas     1596.
+30 San Francisco 1686.
+31 LAC           1725.
+32 Seattle       1812.</code></pre>
+</div>
+</div>
+<p>As can be seen, the Cleveland Browns are at the top of this list. This is not surprising as they appeared multiple times on several of the previous lists. Meanwhile, the Seattle Seahawks are at the bottom of this list. This makes sense as they are the most geographically isolated team in the NFL. In fact, the bottom six teams on this list are all on the west coast. This makes sense as there are far more college football teams in the eastern half of the country than the western half. We will not look at which teams tend to draft players from the closest hometowns.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">arrange</span>(<span class="fu">summarise</span>(<span class="fu">group_by</span>(draft, Team), <span class="at">HTAvg =</span> <span class="fu">mean</span>(HTDistance)), HTAvg) <span class="sc">%&gt;%</span> <span class="fu">print</span>(<span class="at">n =</span> <span class="dv">32</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 32 × 2
+   Team          HTAvg
+   &lt;chr&gt;         &lt;dbl&gt;
+ 1 Baltimore      485.
+ 2 Cleveland      525.
+ 3 Tennessee      590.
+ 4 Jacksonville   632.
+ 5 Carolina       655.
+ 6 Cincinnati     736.
+ 7 NYJ            778.
+ 8 New Orleans    866.
+ 9 Indianapolis   908.
+10 Kansas City    914.
+11 Philadelphia   923.
+12 Minnesota      931.
+13 Houston        939.
+14 New England    989.
+15 Washington    1034.
+16 Green Bay     1052.
+17 Miami         1076.
+18 Dallas        1103.
+19 Detroit       1128.
+20 Denver        1151.
+21 Atlanta       1280.
+22 Pittsburgh    1348.
+23 Las Vegas     1383.
+24 Buffalo       1405.
+25 Tampa Bay     1434.
+26 NYG           1472.
+27 San Francisco 1545.
+28 Arizona       1602.
+29 LAR           1707.
+30 LAC           1857.
+31 Seattle       1967.
+32 Chicago       2397.</code></pre>
+</div>
+</div>
+<p>As can be seen, the Baltimore Ravens are on top of this list just ahead of the Cleveland Browns. This is a bit surprising as they did not appear repeatedly in previous lists like the Cleveland Browns did. However, they were in the top five of the previous list based on alma maters. Meanwhile, the Chicago Bears are at the bottom of this list right behind the Seattle Seahawks. This is even more surprising as they are one of the most centrally located teams in the NFL and were right in the middle of the pack in the previous list based on alma maters. To get a closer look at how these teams end up on the top and bottom of these lists, we will look at them individually.</p>
+</section>
+<section id="cleveland-browns" class="level1">
+<h1>Cleveland Browns</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(draft, Team <span class="sc">==</span> <span class="st">"Cleveland"</span>) <span class="sc">%&gt;%</span> <span class="fu">print</span>(<span class="at">width =</span> <span class="cn">Inf</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 22
+  Overall Round  Pick Player           Position         Team      NFLCity  
+    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;            &lt;chr&gt;            &lt;chr&gt;     &lt;chr&gt;    
+1      54     2    22 Michael Hall Jr. Defensive Tackle Cleveland Cleveland
+2      85     3    21 Zak Zinter       Offensive Guard  Cleveland Cleveland
+3     156     5    21 Jamari Thrash    Wide Receiver    Cleveland Cleveland
+4     206     6    30 Nathaniel Watson Linebacker       Cleveland Cleveland
+5     227     7     7 Myles Harden     Cornerback       Cleveland Cleveland
+6     243     7    23 Jowon Briggs     Defensive Tackle Cleveland Cleveland
+  NFLState NFLLatitude NFLLongitude College           Conference AMCity    
+  &lt;chr&gt;          &lt;dbl&gt;        &lt;dbl&gt; &lt;chr&gt;             &lt;chr&gt;      &lt;chr&gt;     
+1 OH              41.5        -81.7 Ohio State        Big Ten    Columbus  
+2 OH              41.5        -81.7 Michigan          Big Ten    Ann Arbor 
+3 OH              41.5        -81.7 Louisville        ACC        Louisville
+4 OH              41.5        -81.7 Mississippi State SEC        Starkville
+5 OH              41.5        -81.7 South Dakota      MVFC       Vermillion
+6 OH              41.5        -81.7 Cincinnati        Big 12     Cincinnati
+  AMState AMLatitude AMLongitude AMDistance HTCity        HTState HTLatitude
+  &lt;chr&gt;        &lt;dbl&gt;       &lt;dbl&gt;      &lt;dbl&gt; &lt;chr&gt;         &lt;chr&gt;        &lt;dbl&gt;
+1 OH            40.0       -83.0       124. Streetsboro   OH            41.2
+2 MI            42.3       -83.7       118. North Andover MA            42.7
+3 KY            38.2       -85.8       313. Lagrange      GA            33.0
+4 MS            33.5       -88.8       677. Maplesville   AL            32.8
+5 SD            42.8       -96.9       786. Miami Gardens FL            25.9
+6 OH            39.1       -84.5       221. Cincinnati    OH            39.1
+  HTLongitude HTDistance
+        &lt;dbl&gt;      &lt;dbl&gt;
+1       -81.3       25.7
+2       -71.1      550. 
+3       -85.0      612. 
+4       -86.9      665. 
+5       -80.2     1076. 
+6       -84.5      222. </code></pre>
+</div>
+</div>
+<p>As can be seen, Michael Hall Jr.&nbsp;and Jowon Briggs are both from Ohio and also went to college in Ohio. The Cleveland Browns also drafted Zak Zinter out of Michigan which is actually closer to Cleveland than the two Ohio universities. Myles Harden is the furthest player that the Cleveland Browns drafted based on both metrics as he is from Miami Gardens, FL and played college football at South Dakota. Based on who the Cleveland Browns drafted, it makes sense why they were at or near the top of both lists.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(draft, Team <span class="sc">==</span> <span class="st">"Cleveland"</span>) <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>() <span class="sc">+</span> <span class="fu">borders</span>(<span class="st">"state"</span>) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="fu">aes</span>(NFLLongitude, NFLLatitude, <span class="at">color =</span> <span class="st">"black"</span>)) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="fu">aes</span>(AMLongitude, AMLatitude, <span class="at">color =</span> <span class="st">"#311D00"</span>)) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="fu">aes</span>(HTLongitude, HTLatitude, <span class="at">color =</span> <span class="st">"#FF3C00"</span>)) <span class="sc">+</span> <span class="fu">coord_quickmap</span>() <span class="sc">+</span> <span class="fu">scale_color_identity</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="ds6_files/figure-html/unnamed-chunk-23-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="baltimore-ravens" class="level1">
+<h1>Baltimore Ravens</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(draft, Team <span class="sc">==</span> <span class="st">"Baltimore"</span>) <span class="sc">%&gt;%</span> <span class="fu">print</span>(<span class="at">width =</span> <span class="cn">Inf</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 9 × 22
+  Overall Round  Pick Player            Position         Team      NFLCity  
+    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;             &lt;chr&gt;            &lt;chr&gt;     &lt;chr&gt;    
+1      30     1    30 Nate Wiggins      Cornerback       Baltimore Baltimore
+2      62     2    30 Roger Rosengarten Offensive Tackle Baltimore Baltimore
+3      93     3    30 Adisa Isaac       Linebacker       Baltimore Baltimore
+4     113     4    13 Devontez Walker   Wide Receiver    Baltimore Baltimore
+5     130     4    30 T.J. Tampa        Cornerback       Baltimore Baltimore
+6     165     5    30 Rasheen Ali       Running Back     Baltimore Baltimore
+7     218     6    42 Devin Leary       Quarterback      Baltimore Baltimore
+8     228     7     8 Nick Samac        Center           Baltimore Baltimore
+9     250     7    30 Sanoussi Kane     Safety           Baltimore Baltimore
+  NFLState NFLLatitude NFLLongitude College        Conference AMCity         
+  &lt;chr&gt;          &lt;dbl&gt;        &lt;dbl&gt; &lt;chr&gt;          &lt;chr&gt;      &lt;chr&gt;          
+1 MD              39.3        -76.6 Clemson        ACC        Clemson        
+2 MD              39.3        -76.6 Washington     Pac-12     Seattle        
+3 MD              39.3        -76.6 Penn State     Big Ten    University Park
+4 MD              39.3        -76.6 North Carolina ACC        Chapel Hill    
+5 MD              39.3        -76.6 Iowa State     Big 12     Ames           
+6 MD              39.3        -76.6 Marshall       Sun Belt   Huntington     
+7 MD              39.3        -76.6 Kentucky       SEC        Lexington      
+8 MD              39.3        -76.6 Michigan State Big Ten    East Lansing   
+9 MD              39.3        -76.6 Purdue         Big Ten    West Lafayette 
+  AMState AMLatitude AMLongitude AMDistance HTCity           HTState HTLatitude
+  &lt;chr&gt;        &lt;dbl&gt;       &lt;dbl&gt;      &lt;dbl&gt; &lt;chr&gt;            &lt;chr&gt;        &lt;dbl&gt;
+1 SC            34.7       -82.8       468. Atlanta          GA            33.7
+2 WA            47.7      -122.       2332. Highlands Ranch  CO            39.6
+3 PA            40.8       -77.9       124. Brooklyn         NY            40.7
+4 NC            35.9       -79.0       268. Charlotte        NC            35.2
+5 IA            42.0       -93.6       912. Saint Petersburg FL            27.8
+6 WV            38.4       -82.4       318. Cleveland        OH            41.5
+7 KY            38.0       -84.5       435. Sicklerville     NJ            39.7
+8 MI            42.7       -84.5       475. Mentor           OH            41.7
+9 IN            40.4       -86.9       553. Harlem           NY            40.8
+  HTLongitude HTDistance
+        &lt;dbl&gt;      &lt;dbl&gt;
+1       -84.4      576. 
+2      -105.      1511. 
+3       -73.9      171. 
+4       -80.8      363. 
+5       -82.7      866. 
+6       -81.7      308. 
+7       -75.0       93.4
+8       -81.3      298. 
+9       -73.9      177. </code></pre>
+</div>
+</div>
+<p>As can be seen, the Baltimore Ravens did not draft anyone who is either from Maryland or went to college in Maryland. However, most of the players they drafted were from relatively nearby. The only real outlier is Roger Rosengarten who is from Highlands Ranch, CO and played college football at Washington. Adisa Isaac played college football at Penn State which is the closest alma mater to Baltimore. Meanwhile, Devin Leary is from Sicklerville, NJ which is under 100 miles from Baltimore. Based on who the Baltimore Ravens drafted, it makes sense why they were at or near the top of both lists.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(draft, Team <span class="sc">==</span> <span class="st">"Baltimore"</span>) <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>() <span class="sc">+</span> <span class="fu">borders</span>(<span class="st">"state"</span>) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="fu">aes</span>(NFLLongitude, NFLLatitude, <span class="at">color =</span> <span class="st">"black"</span>)) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="fu">aes</span>(AMLongitude, AMLatitude, <span class="at">color =</span> <span class="st">"#241773"</span>)) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="fu">aes</span>(HTLongitude, HTLatitude, <span class="at">color =</span> <span class="st">"#9E7C0C"</span>)) <span class="sc">+</span> <span class="fu">coord_quickmap</span>() <span class="sc">+</span> <span class="fu">scale_color_identity</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="ds6_files/figure-html/unnamed-chunk-25-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="seattle-seahawks" class="level1">
+<h1>Seattle Seahawks</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(draft, Team <span class="sc">==</span> <span class="st">"Seattle"</span>) <span class="sc">%&gt;%</span> <span class="fu">print</span>(<span class="at">width =</span> <span class="cn">Inf</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 8 × 22
+  Overall Round  Pick Player             Position         Team    NFLCity
+    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;              &lt;chr&gt;            &lt;chr&gt;   &lt;chr&gt;  
+1      16     1    16 Byron Murphy II    Defensive Tackle Seattle Seattle
+2      81     3    17 Christian Haynes   Offensive Guard  Seattle Seattle
+3     118     4    18 Tyrice Knight      Linebacker       Seattle Seattle
+4     121     4    21 AJ Barner          Tight End        Seattle Seattle
+5     136     5     1 Nehemiah Pritchett Cornerback       Seattle Seattle
+6     179     6     3 Sataoa Laumea      Offensive Guard  Seattle Seattle
+7     192     6    16 D.J. James         Cornerback       Seattle Seattle
+8     207     6    31 Michael Jerrell    Offensive Tackle Seattle Seattle
+  NFLState NFLLatitude NFLLongitude College  Conference            
+  &lt;chr&gt;          &lt;dbl&gt;        &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;                 
+1 WA              47.6        -122. Texas    Big 12                
+2 WA              47.6        -122. UConn    FBS Independents      
+3 WA              47.6        -122. UTEP     Conference USA        
+4 WA              47.6        -122. Michigan Big Ten               
+5 WA              47.6        -122. Auburn   SEC                   
+6 WA              47.6        -122. Utah     Pac-12                
+7 WA              47.6        -122. Auburn   SEC                   
+8 WA              47.6        -122. Findlay  Great Midwest Athletic
+  AMCity         AMState AMLatitude AMLongitude AMDistance HTCity       HTState
+  &lt;chr&gt;          &lt;chr&gt;        &lt;dbl&gt;       &lt;dbl&gt;      &lt;dbl&gt; &lt;chr&gt;        &lt;chr&gt;  
+1 Austin         TX            30.3       -97.7      1770. Desoto       TX     
+2 East Hartford  CT            41.8       -72.6      2439. Bowie        MD     
+3 El Paso        TX            31.8      -107.       1374. Lakeland     FL     
+4 Ann Arbor      MI            42.3       -83.7      1907. Aurora       OH     
+5 Auburn         AL            32.6       -85.5      2181. Jackson      AL     
+6 Salt Lake City UT            40.8      -112.        702. Rialto       CA     
+7 Auburn         AL            32.6       -85.5      2181. Mobile       AL     
+8 Findlay        OH            41.0       -83.8      1943. Indianapolis IN     
+  HTLatitude HTLongitude HTDistance
+       &lt;dbl&gt;       &lt;dbl&gt;      &lt;dbl&gt;
+1       32.6       -96.9      1687.
+2       38.9       -76.7      2340.
+3       28.0       -81.9      2547.
+4       41.3       -81.3      2048.
+5       31.5       -87.9      2122.
+6       34.1      -117.        966.
+7       30.7       -88.0      2153.
+8       39.8       -86.2      1872.</code></pre>
+</div>
+</div>
+<p>As can be seen, the Seattle Seahawks did not draft anyone from nearby. Sataoa Laumea is the closest player that the Seattle Seahawks drafted by both metrics as he is from Rialto, CA and played college football at Utah. In fact, he is the only player who is either from or went to college within 1000 miles of Seattle. Christian Haynes played college football for UCONN which is the furthest alma mater from Seattle. Meanwhile, Tyrice Knight is from Lakeland, FL which is about as far from Seattle as you can get in the contiguous United States. Based on who the Seattle Seahawks drafted, it makes sense why they were at or near the bottom of both lists.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(draft, Team <span class="sc">==</span> <span class="st">"Seattle"</span>) <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>() <span class="sc">+</span> <span class="fu">borders</span>(<span class="st">"state"</span>) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="fu">aes</span>(NFLLongitude, NFLLatitude, <span class="at">color =</span> <span class="st">"black"</span>)) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="fu">aes</span>(AMLongitude, AMLatitude, <span class="at">color =</span> <span class="st">"#002244"</span>)) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="fu">aes</span>(HTLongitude, HTLatitude, <span class="at">color =</span> <span class="st">"#69BE28"</span>)) <span class="sc">+</span> <span class="fu">coord_quickmap</span>() <span class="sc">+</span> <span class="fu">scale_color_identity</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="ds6_files/figure-html/unnamed-chunk-27-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="chicago-bears" class="level1">
+<h1>Chicago Bears</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(draft, Team <span class="sc">==</span> <span class="st">"Chicago"</span>) <span class="sc">%&gt;%</span> <span class="fu">print</span>(<span class="at">width =</span> <span class="cn">Inf</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 22
+  Overall Round  Pick Player          Position         Team    NFLCity NFLState
+    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;           &lt;chr&gt;            &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   
+1       1     1     1 Caleb Williams  Quarterback      Chicago Chicago IL      
+2       9     1     9 Rome Odunze     Wide Receiver    Chicago Chicago IL      
+3      75     3    11 Kiran Amegadjie Offensive Tackle Chicago Chicago IL      
+4     122     4    22 Tory Taylor     Punter           Chicago Chicago IL      
+5     144     5     9 Austin Booker   Defensive Edge   Chicago Chicago IL      
+  NFLLatitude NFLLongitude College    Conference AMCity      AMState AMLatitude
+        &lt;dbl&gt;        &lt;dbl&gt; &lt;chr&gt;      &lt;chr&gt;      &lt;chr&gt;       &lt;chr&gt;        &lt;dbl&gt;
+1        41.9        -87.6 USC        Pac-12     Los Angeles CA            34.0
+2        41.9        -87.6 Washington Pac-12     Seattle     WA            47.7
+3        41.9        -87.6 Yale       Ivy        New Haven   CT            41.3
+4        41.9        -87.6 Iowa       Big Ten    Iowa City   IA            41.7
+5        41.9        -87.6 Kansas     Big 12     Lawrence    KS            39.0
+  AMLongitude AMDistance HTCity     HTState HTLatitude HTLongitude HTDistance
+        &lt;dbl&gt;      &lt;dbl&gt; &lt;chr&gt;      &lt;chr&gt;        &lt;dbl&gt;       &lt;dbl&gt;      &lt;dbl&gt;
+1      -118.       1750. Washington DC            38.9       -77.0      594. 
+2      -122.       1737. Las Vegas  NV            36.2      -115.      1526. 
+3       -73.0       759. Hinsdale   IL            41.8       -87.9       16.7
+4       -91.6       204. Melbourne  VIC          -37.8       145.      9674. 
+5       -95.2       449. Greenwood  IN            39.6       -86.1      174. </code></pre>
+</div>
+</div>
+<p>As can be seen, Tory Taylor is from nearly 10000 miles away from Chicago in Melbourne, Australia. This one player explains why the Chicago Bears were at the bottom of the list based on hometowns while being right in the middle of the pack of the list based on alma maters. In fact, they would actually move all the way up to third on the closest hometowns list if this one player was removed. It also does not help that they only drafted five players, so the one outlier had a much bigger impact on the mean than if they had drafted more. Despite being from the furthest hometown, Taylor is actually from the closest alma mater to Chicago as he played at Iowa. I mentioned earlier that it is not surprising to see a punter from Australia, and it is not surprising to see a punter from Iowa either as Iowa is known for its punters. As mentioned earlier, the Chicago Bears have the unique distinction of drafting the players not only from the furthest hometown but also from the closest hometown as Kiran Amegadjie is from the Chicago suburb of Hinsdale, IL. Meanwhile, both of their first round picks played college football on the west coast as Caleb Williams played at USC while Rome Odunze played at Washington.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(draft, Team <span class="sc">==</span> <span class="st">"Chicago"</span>) <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>() <span class="sc">+</span> <span class="fu">borders</span>(<span class="st">"state"</span>) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="fu">aes</span>(NFLLongitude, NFLLatitude, <span class="at">color =</span> <span class="st">"black"</span>)) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="fu">aes</span>(AMLongitude, AMLatitude, <span class="at">color =</span> <span class="st">"#0B162A"</span>)) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="fu">aes</span>(HTLongitude, HTLatitude, <span class="at">color =</span> <span class="st">"#C83803"</span>)) <span class="sc">+</span> <span class="fu">coord_quickmap</span>() <span class="sc">+</span> <span class="fu">scale_color_identity</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="ds6_files/figure-html/unnamed-chunk-29-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="dallas-cowboys" class="level1">
+<h1>Dallas Cowboys</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(draft, Team <span class="sc">==</span> <span class="st">"Dallas"</span>) <span class="sc">%&gt;%</span> <span class="fu">print</span>(<span class="at">width =</span> <span class="cn">Inf</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 8 × 22
+  Overall Round  Pick Player            Position         Team   NFLCity  
+    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;             &lt;chr&gt;            &lt;chr&gt;  &lt;chr&gt;    
+1      29     1    29 Tyler Guyton      Offensive Tackle Dallas Arlington
+2      56     2    24 Marshawn Kneeland Defensive Edge   Dallas Arlington
+3      73     3     9 Cooper Beebe      Offensive Guard  Dallas Arlington
+4      87     3    24 Marist Liufau     Linebacker       Dallas Arlington
+5     174     5    39 Caelen Carson     Cornerback       Dallas Arlington
+6     216     6    40 Ryan Flournoy     Wide Receiver    Dallas Arlington
+7     233     7    13 Nathan Thomas     Offensive Tackle Dallas Arlington
+8     244     7    24 Justin Rogers     Defensive Tackle Dallas Arlington
+  NFLState NFLLatitude NFLLongitude College                  Conference      
+  &lt;chr&gt;          &lt;dbl&gt;        &lt;dbl&gt; &lt;chr&gt;                    &lt;chr&gt;           
+1 TX              32.7        -97.1 Oklahoma                 Big 12          
+2 TX              32.7        -97.1 Western Michigan         Mid-American    
+3 TX              32.7        -97.1 Kansas State             Big 12          
+4 TX              32.7        -97.1 Notre Dame               FBS Independents
+5 TX              32.7        -97.1 Wake Forest              ACC             
+6 TX              32.7        -97.1 Southeast Missouri State Big South-OVC   
+7 TX              32.7        -97.1 Louisiana                Sun Belt        
+8 TX              32.7        -97.1 Auburn                   SEC             
+  AMCity         AMState AMLatitude AMLongitude AMDistance HTCity       HTState
+  &lt;chr&gt;          &lt;chr&gt;        &lt;dbl&gt;       &lt;dbl&gt;      &lt;dbl&gt; &lt;chr&gt;        &lt;chr&gt;  
+1 Norman         OK            35.2       -97.4       171. Manor        TX     
+2 Kalamazoo      MI            42.3       -85.6       910. Grand Rapids MI     
+3 Manhattan      KS            39.2       -96.6       446. Kansas City  KS     
+4 Notre Dame     IN            41.7       -86.2       859. Kalihi       HI     
+5 Winston-Salem  NC            36.1       -80.3       988. Waldorf      MD     
+6 Cape Girardeau MO            37.3       -89.5       531. Hazel Crest  IL     
+7 Lafayette      LA            30.2       -92.0       345. Chalmette    LA     
+8 Auburn         AL            32.6       -85.5       676. Detroit      MI     
+  HTLatitude HTLongitude HTDistance
+       &lt;dbl&gt;       &lt;dbl&gt;      &lt;dbl&gt;
+1       30.3       -97.6       168.
+2       43.0       -85.7       940.
+3       39.1       -94.6       460.
+4       21.3      -158.       3779.
+5       38.6       -76.9      1202.
+6       41.6       -87.7       799.
+7       29.9       -90.0       464.
+8       42.3       -83.0      1013.</code></pre>
+</div>
+</div>
+<p>The last team I want to look at is the Dallas Cowboys simply because they are my favorite team. They were in the top three of the list based on alma maters while being right in the middle of the pack of the list based on hometowns. This disconnect can be explained by Marist Liufau who is from Kalihi, HI. As mentioned earlier, Hawaii is far from the rest of the United States, so a player from there will drag the average down. As can be seen, Tyler Guyton is from Texas and played college football at Oklahoma which is the closest alma mater to Arlington. Meanwhile, Caelen Carson played college football at Wake Forest which is the furthest alma mater from Arlington.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(draft, Team <span class="sc">==</span> <span class="st">"Dallas"</span>) <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>() <span class="sc">+</span> <span class="fu">borders</span>(<span class="st">"state"</span>) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="fu">aes</span>(NFLLongitude, NFLLatitude, <span class="at">color =</span> <span class="st">"black"</span>)) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="fu">aes</span>(AMLongitude, AMLatitude, <span class="at">color =</span> <span class="st">"#041E42"</span>)) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="fu">aes</span>(HTLongitude, HTLatitude, <span class="at">color =</span> <span class="st">"#869397"</span>)) <span class="sc">+</span> <span class="fu">coord_quickmap</span>() <span class="sc">+</span> <span class="fu">scale_color_identity</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="ds6_files/figure-html/unnamed-chunk-31-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="conclusion" class="level1">
+<h1>Conclusion</h1>
+<p>While looking at this data has been interesting, we have not been able to prove that geography has much of an impact on the NFL draft. We were able to prove definitively that geography does not play any more of an impact in the later rounds of the NFL draft than the earlier ones. Meanwhile, looking at the individual teams did not provide sufficient evidence that some teams focus more on nearby players than others. To prove this one way or another, we would probably need to look at more drafts. If the same teams ended up near the top and bottom of those lists, then a case could be made that those teams focus more or less on nearby players than others. Looking at previous drafts is beyond the scope of this project, but it would certainly be interesting to look at in the future.</p>
+<p>https://collegefootballdata.com/exporter/draft/picks?year=2024</p>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

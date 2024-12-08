@@ -1,0 +1,318 @@
+---
+title: "ds6"
+author: "Matthew Robinson"
+format: html
+editor: visual
+editor_options: 
+  chunk_output_type: inline
+---
+
+```{r}
+library(ggplot2)
+library(ggstance)
+library(ggbeeswarm)
+library(tidyverse)
+library(lvplot)
+library(lubridate)
+library(hexbin)
+library(splines)
+library(maps)
+library(geosphere)
+library(modelr)
+options(na.action = na.warn)
+```
+
+# Geography's Impact on the NFL Draft
+
+# Introduction
+
+This project will look at how geography impacts the NFL draft or if it does at all. There are 32 teams in the NFL spread across the whole country. It is very much a national sport, and teams will often have players from all around the country and even the world. Because of this, geography is not usually thought of as a factor in who NFL teams draft. However, I have always wondered if geography does play a role in the NFL draft, and this curiosity is what inspired me to take on this project.
+
+# Data Sources
+
+The main data set that will be used in this project comes from collegefootballdata.com. This data set contains data on every pick from the 2024 NFL Draft. Critically for our purposes, this data includes information on each player's alma mater and hometown. This data set was downloaded as a csv file, and the read_csv function can be used to transfer that data set into a data frame.
+
+```{r}
+draft <- read_csv("draft1.csv", show_col_types = FALSE)
+draft %>% print(width = Inf)
+```
+
+Besides this data set, another data set from collegefootballdata.com will also be used to add information to the draft data set. This data set contains data on every FBS school. For our research, the data on each school's location will be needed. This data set was downloaded as a csv file and tidied up in a previous assignment. The read_csv function can be used to transfer the tidy version of that data set into a data frame.
+
+```{r}
+fbs <- read_csv("fbs2.csv", show_col_types = FALSE)
+fbs %>% print(width = Inf)
+```
+
+These two data sets will be very useful, but they will not provide all the information we need. Further information will be found through my own research and added manually into the data set. Most of this information will come from Wikipedia.
+
+# Tidying the Data
+
+Before we can start looking at this data, we must start by making it tidy. The first thing we can do is remove several unnecessary columns. The ID columns are unique identifiers that are not needed since we are not referencing the larger database, the Year column is unnecessary since we are only looking at 2024, and several of each player's measurables including height, weight, and their rankings and grades are not relevant to our study. Therefore, all of these columns can be removed. There are also a couple of geography columns that can be removed. The vast majority of players are from the USA, and the few that are not can be specified elsewhere in the data set. We will also not be looking at counties in this project, so that column can be removed too.
+
+```{r}
+draft <- select(draft, -c("CollegeAthleteId", "NflAthleteId", "CollegeId", "Year", "Height", "Weight", "PreDraftRanking", "PreDraftPositionRanking", "PreDraftGrade", "HometownInfo Country", "HometownInfo CountyFips"))
+draft %>% print(width = Inf)
+```
+
+The next step is to change some column names. Several of the column names should be changed because they are too long or not specific enough. In fact, the Overall, Round, Pick, and Position columns are the only ones whose names do not need to be changed. Every other column will receive new names.
+
+```{r}
+draft <- rename(draft, "College" = "CollegeTeam")
+draft <- rename(draft, "Conference" = "CollegeConference")
+draft <- rename(draft, "Team" = "NflTeam")
+draft <- rename(draft, "Player" = "Name")
+draft <- rename(draft, "HTCity" = "HometownInfo City")
+draft <- rename(draft, "HTState" = "HometownInfo State")
+draft <- rename(draft, "HTLatitude" = "HometownInfo Latitude")
+draft <- rename(draft, "HTLongitude" = "HometownInfo Longitude")
+draft %>% print(width = Inf)
+```
+
+Now that the columns have been renamed, it is now time to start adding in more data. First of all, we will add in data from the fbs data set. We want to match each entry in the data set with the appropriate data from the City, State, Latitude, and Longitude columns from the fbs data set based on the College column. This can be done with a left join. This will not cover every college because not every college in the draft data set is in the FBS, so that data will have to be manually added in later.
+
+```{r}
+draft <- draft %>% left_join(select(fbs, School, City, State, Latitude, Longitude), c("College" = "School"))
+draft <- rename(draft, "AMCity" = "City")
+draft <- rename(draft, "AMState" = "State")
+draft <- rename(draft, "AMLatitude" = "Latitude")
+draft <- rename(draft, "AMLongitude" = "Longitude")
+draft %>% print(width = Inf)
+```
+
+The last columns we need to add are geographic data for each NFL team. Once again, this will include city, state, latitude, and longitude. Unfortunately, I do not have access to a data set with this information, so I will have to add the data for each team manually. This information will come from Wikipedia. The following map shows that the coordinates have been added correctly.
+
+```{r}
+draft <- mutate(draft, NFLCity = NA, NFLState = NA, NFLLatitude = NA, NFLLongitude = NA)
+draft <- mutate(draft, NFLCity = ifelse(Team == "Arizona", "Glendale", NFLCity), NFLState = ifelse(Team == "Arizona", "AZ", NFLState), NFLLatitude = ifelse(Team == "Arizona", 33.528, NFLLatitude), NFLLongitude = ifelse(Team == "Arizona", -112.263, NFLLongitude))
+draft <- mutate(draft, NFLCity = ifelse(Team == "Atlanta", "Atlanta", NFLCity), NFLState = ifelse(Team == "Atlanta", "GA", NFLState), NFLLatitude = ifelse(Team == "Atlanta", 33.756, NFLLatitude), NFLLongitude = ifelse(Team == "Atlanta", -84.4, NFLLongitude))
+draft <- mutate(draft, NFLCity = ifelse(Team == "Baltimore", "Baltimore", NFLCity), NFLState = ifelse(Team == "Baltimore", "MD", NFLState), NFLLatitude = ifelse(Team == "Baltimore", 39.278, NFLLatitude), NFLLongitude = ifelse(Team == "Baltimore", -76.623, NFLLongitude))
+draft <- mutate(draft, NFLCity = ifelse(Team == "Buffalo", "Orchard Park", NFLCity), NFLState = ifelse(Team == "Buffalo", "NY", NFLState), NFLLatitude = ifelse(Team == "Buffalo", 42.774, NFLLatitude), NFLLongitude = ifelse(Team == "Buffalo", -78.787, NFLLongitude))
+draft <- mutate(draft, NFLCity = ifelse(Team == "Carolina", "Charlotte", NFLCity), NFLState = ifelse(Team == "Carolina", "NC", NFLState), NFLLatitude = ifelse(Team == "Carolina", 35.226, NFLLatitude), NFLLongitude = ifelse(Team == "Carolina", -80.853, NFLLongitude))
+draft <- mutate(draft, NFLCity = ifelse(Team == "Chicago", "Chicago", NFLCity), NFLState = ifelse(Team == "Chicago", "IL", NFLState), NFLLatitude = ifelse(Team == "Chicago", 41.8623, NFLLatitude), NFLLongitude = ifelse(Team == "Chicago", -87.6167, NFLLongitude))
+draft <- mutate(draft, NFLCity = ifelse(Team == "Cincinnati", "Cincinnati", NFLCity), NFLState = ifelse(Team == "Cincinnati", "OH", NFLState), NFLLatitude = ifelse(Team == "Cincinnati", 39.095, NFLLatitude), NFLLongitude = ifelse(Team == "Cincinnati", -84.516, NFLLongitude))
+draft <- mutate(draft, NFLCity = ifelse(Team == "Cleveland", "Cleveland", NFLCity), NFLState = ifelse(Team == "Cleveland", "OH", NFLState), NFLLatitude = ifelse(Team == "Cleveland", 41.5, NFLLatitude), NFLLongitude = ifelse(Team == "Cleveland", -81.7, NFLLongitude))
+draft <- mutate(draft, NFLCity = ifelse(Team == "Dallas", "Arlington", NFLCity), NFLState = ifelse(Team == "Dallas", "TX", NFLState), NFLLatitude = ifelse(Team == "Dallas", 32.748, NFLLatitude), NFLLongitude = ifelse(Team == "Dallas", -97.093, NFLLongitude))
+draft <- mutate(draft, NFLCity = ifelse(Team == "Denver", "Denver", NFLCity), NFLState = ifelse(Team == "Denver", "CO", NFLState), NFLLatitude = ifelse(Team == "Denver", 39.744, NFLLatitude), NFLLongitude = ifelse(Team == "Denver", -105.02, NFLLongitude))
+draft <- mutate(draft, NFLCity = ifelse(Team == "Detroit", "Detroit", NFLCity), NFLState = ifelse(Team == "Detroit", "MI", NFLState), NFLLatitude = ifelse(Team == "Detroit", 42.34, NFLLatitude), NFLLongitude = ifelse(Team == "Detroit", -83.046, NFLLongitude))
+draft <- mutate(draft, NFLCity = ifelse(Team == "Green Bay", "Green Bay", NFLCity), NFLState = ifelse(Team == "Green Bay", "WI", NFLState), NFLLatitude = ifelse(Team == "Green Bay", 44.5, NFLLatitude), NFLLongitude = ifelse(Team == "Green Bay", -88.062, NFLLongitude))
+draft <- mutate(draft, NFLCity = ifelse(Team == "Houston", "Houston", NFLCity), NFLState = ifelse(Team == "Houston", "TX", NFLState), NFLLatitude = ifelse(Team == "Houston", 29.685, NFLLatitude), NFLLongitude = ifelse(Team == "Houston", -95.41, NFLLongitude))
+draft <- mutate(draft, NFLCity = ifelse(Team == "Indianapolis", "Indianapolis", NFLCity), NFLState = ifelse(Team == "Indianapolis", "IN", NFLState), NFLLatitude = ifelse(Team == "Indianapolis", 39.76, NFLLatitude), NFLLongitude = ifelse(Team == "Indianapolis", -86.164, NFLLongitude))
+draft <- mutate(draft, NFLCity = ifelse(Team == "Jacksonville", "Jacksonville", NFLCity), NFLState = ifelse(Team == "Jacksonville", "FL", NFLState), NFLLatitude = ifelse(Team == "Jacksonville", 30.324, NFLLatitude), NFLLongitude = ifelse(Team == "Jacksonville", -81.6375, NFLLongitude))
+draft <- mutate(draft, NFLCity = ifelse(Team == "Kansas City", "Kansas City", NFLCity), NFLState = ifelse(Team == "Kansas City", "MO", NFLState), NFLLatitude = ifelse(Team == "Kansas City", 39.049, NFLLatitude), NFLLongitude = ifelse(Team == "Kansas City", -94.484, NFLLongitude))
+draft <- mutate(draft, NFLCity = ifelse(Team == "Las Vegas", "Paradise", NFLCity), NFLState = ifelse(Team == "Las Vegas", "NV", NFLState), NFLLatitude = ifelse(Team == "Las Vegas", 36.09, NFLLatitude), NFLLongitude = ifelse(Team == "Las Vegas", -115.184, NFLLongitude))
+draft <- mutate(draft, NFLCity = ifelse(Team == "Los Angeles", "Inglewood", NFLCity), NFLState = ifelse(Team == "Los Angeles", "CA", NFLState), NFLLatitude = ifelse(Team == "Los Angeles", 33.953, NFLLatitude), NFLLongitude = ifelse(Team == "Los Angeles", -118.339, NFLLongitude))
+draft <- mutate(draft, NFLCity = ifelse(Team == "Miami", "Miami Gardens", NFLCity), NFLState = ifelse(Team == "Miami", "FL", NFLState), NFLLatitude = ifelse(Team == "Miami", 25.958, NFLLatitude), NFLLongitude = ifelse(Team == "Miami", -80.239, NFLLongitude))
+draft <- mutate(draft, NFLCity = ifelse(Team == "Minnesota", "Minneapolis", NFLCity), NFLState = ifelse(Team == "Minnesota", "MN", NFLState), NFLLatitude = ifelse(Team == "Minnesota", 44.974, NFLLatitude), NFLLongitude = ifelse(Team == "Minnesota", -93.258, NFLLongitude))
+draft <- mutate(draft, NFLCity = ifelse(Team == "New England", "Foxborough", NFLCity), NFLState = ifelse(Team == "New England", "MA", NFLState), NFLLatitude = ifelse(Team == "New England", 42.091, NFLLatitude), NFLLongitude = ifelse(Team == "New England", -71.264, NFLLongitude))
+draft <- mutate(draft, NFLCity = ifelse(Team == "New Orleans", "New Orleans", NFLCity), NFLState = ifelse(Team == "New Orleans", "LA", NFLState), NFLLatitude = ifelse(Team == "New Orleans", 29.95, NFLLatitude), NFLLongitude = ifelse(Team == "New Orleans", -90.081, NFLLongitude))
+draft <- mutate(draft, NFLCity = ifelse(Team == "New York", "East Rutherford", NFLCity), NFLState = ifelse(Team == "New York", "NJ", NFLState), NFLLatitude = ifelse(Team == "New York", 40.814, NFLLatitude), NFLLongitude = ifelse(Team == "New York", -74.074, NFLLongitude))
+draft <- mutate(draft, NFLCity = ifelse(Team == "Philadelphia", "Philadelphia", NFLCity), NFLState = ifelse(Team == "Philadelphia", "PA", NFLState), NFLLatitude = ifelse(Team == "Philadelphia", 39.9, NFLLatitude), NFLLongitude = ifelse(Team == "Philadelphia", -75.1675, NFLLongitude))
+draft <- mutate(draft, NFLCity = ifelse(Team == "Pittsburgh", "Pittsburgh", NFLCity), NFLState = ifelse(Team == "Pittsburgh", "PA", NFLState), NFLLatitude = ifelse(Team == "Pittsburgh", 40.447, NFLLatitude), NFLLongitude = ifelse(Team == "Pittsburgh", -80.016, NFLLongitude))
+draft <- mutate(draft, NFLCity = ifelse(Team == "San Francisco", "Santa Clara", NFLCity), NFLState = ifelse(Team == "San Francisco", "CA", NFLState), NFLLatitude = ifelse(Team == "San Francisco", 37.403, NFLLatitude), NFLLongitude = ifelse(Team == "San Francisco", -121.97, NFLLongitude))
+draft <- mutate(draft, NFLCity = ifelse(Team == "Seattle", "Seattle", NFLCity), NFLState = ifelse(Team == "Seattle", "WA", NFLState), NFLLatitude = ifelse(Team == "Seattle", 47.5952, NFLLatitude), NFLLongitude = ifelse(Team == "Seattle", -122.3316, NFLLongitude))
+draft <- mutate(draft, NFLCity = ifelse(Team == "Tampa Bay", "Tampa", NFLCity), NFLState = ifelse(Team == "Tampa Bay", "FL", NFLState), NFLLatitude = ifelse(Team == "Tampa Bay", 27.976, NFLLatitude), NFLLongitude = ifelse(Team == "Tampa Bay", -82.5, NFLLongitude))
+draft <- mutate(draft, NFLCity = ifelse(Team == "Tennessee", "Nashville", NFLCity), NFLState = ifelse(Team == "Tennessee", "TN", NFLState), NFLLatitude = ifelse(Team == "Tennessee", 36.166, NFLLatitude), NFLLongitude = ifelse(Team == "Tennessee", -86.771, NFLLongitude))
+draft <- mutate(draft, NFLCity = ifelse(Team == "Washington", "Landover", NFLCity), NFLState = ifelse(Team == "Washington", "MD", NFLState), NFLLatitude = ifelse(Team == "Washington", 38.9, NFLLatitude), NFLLongitude = ifelse(Team == "Washington", -76.864, NFLLongitude))
+draft %>% ggplot(aes(NFLLongitude, NFLLatitude)) + borders("state") + geom_point() + coord_quickmap()
+```
+
+Now that we have all the columns we need, we can rearrange these columns into an order that makes more sense. We want to be able to identify each pick from the first column, so the Overall column should come first. This would be followed by other identifiers including the Round, Pick, Player, and Position columns. The Team column would come next followed by the NFL geography columns. The College and Conference columns would come after that followed by the alma mater geography columns. Finally, the hometown geography columns will come last.
+
+```{r}
+draft <- select(draft, Overall, Round, Pick, Player, Position, Team, NFLCity, NFLState, NFLLatitude, NFLLongitude, College, Conference, AMCity, AMState, AMLatitude, AMLongitude, HTCity, HTState, HTLatitude, HTLongitude)
+draft %>% print(width = Inf)
+```
+
+Now that the columns are in order, we need to fix some of the data. First of all, you may notice that each NFL team is only identified by their location name. However, there are two teams each named New York and Los Angeles. Therefore, I need to go through and specify which team each one is. Once again, I will be using information from Wikipedia to fill these in. It should be noted that I waited until after assigning geographic data to each team to do this step because the New York and Los Angeles teams each share a stadium.
+
+```{r}
+draft <- mutate(draft, Team = ifelse(Overall == 11 | Overall == 65 | Overall == 134 | Overall == 171 | Overall == 173 | Overall == 176 | Overall == 257, "NYJ", Team))
+draft <- mutate(draft, Team = ifelse(Overall == 6 | Overall == 47 | Overall == 70 | Overall == 107 | Overall == 166 | Overall == 183, "NYG", Team))
+draft <- mutate(draft, Team = ifelse(Overall == 5 | Overall == 34 | Overall == 69 | Overall == 105 | Overall == 137 | Overall == 140 | Overall == 181 | Overall == 225 | Overall == 253, "LAC", Team))
+draft <- mutate(draft, Team = ifelse(Overall == 19 | Overall == 39 | Overall == 83 | Overall == 99 | Overall == 154 | Overall == 196 | Overall == 209 | Overall == 213 | Overall == 217 | Overall == 254, "LAR", Team))
+filter(draft, Team == "New York" | Team == "Los Angeles") %>% print(width = Inf)
+```
+
+Now that the teams are taken care of, the last thing to do is fill in any null values. As mentioned earlier, many of these null values will be the result of not every college in the draft data set being in the FBS. Any missing information will be added in manually using my own research. Once again, most of this data will come from Wikipedia. Once this is done, our data set will finally be tidy.
+
+```{r}
+draft <- mutate(draft, HTState = ifelse(Overall == 35, "NG", HTState), HTLatitude = ifelse(Overall == 35, 6.455, HTLatitude), HTLongitude = ifelse(Overall == 35, 3.384, HTLongitude))
+draft <- mutate(draft, HTLatitude = ifelse(Overall == 40, 42.31, HTLatitude), HTLongitude = ifelse(Overall == 40, -95.251, HTLongitude))
+draft <- mutate(draft, HTLatitude = ifelse(Overall == 71, 43.858, HTLatitude), HTLongitude = ifelse(Overall == 71, -79.036, HTLongitude))
+draft <- mutate(draft, AMCity = ifelse(Overall == 75, "New Haven", AMCity), AMState = ifelse(Overall == 75, "CT", AMState), AMLatitude = ifelse(Overall == 75, 41.313, AMLatitude), AMLongitude = ifelse(Overall == 75, -72.96, AMLongitude))
+draft <- mutate(draft, AMCity = ifelse(Overall == 94, "Houston", AMCity), AMState = ifelse(Overall == 94, "TX", AMState), AMLatitude = ifelse(Overall == 94, 29.6925, AMLatitude), AMLongitude = ifelse(Overall == 94, -95.511, AMLongitude))
+draft <- mutate(draft, HTLatitude = ifelse(Overall == 107, 42.3, HTLatitude), HTLongitude = ifelse(Overall == 107, -82.994, HTLongitude))
+draft <- mutate(draft, AMCity = ifelse(College == "South Dakota State", "Brookings", AMCity), AMState = ifelse(College == "South Dakota State", "SD", AMState), AMLatitude = ifelse(College == "South Dakota State", 44.321, AMLatitude), AMLongitude = ifelse(College == "South Dakota State", -96.78, AMLongitude))
+draft <- mutate(draft, HTLatitude = ifelse(Overall == 122, -37.814, HTLatitude), HTLongitude = ifelse(Overall == 122, 144.963, HTLongitude))
+draft <- mutate(draft, Conference = ifelse(Overall == 126, "Canada West", Conference), AMCity = ifelse(Overall == 126, "Vancouver", AMCity), AMState = ifelse(Overall == 126, "BC", AMState), AMLatitude = ifelse(Overall == 126, 49.2544, AMLatitude), AMLongitude = ifelse(Overall == 126, -123.2455, AMLongitude), HTCity = ifelse(Overall == 126, "Pitt Meadows", HTCity), HTState = ifelse(Overall == 126, "BC", HTState), HTLatitude = ifelse(Overall == 126, 49.233, HTLatitude), HTLongitude = ifelse(Overall == 126, -122.683, HTLongitude))
+draft <- mutate(draft, HTLatitude = ifelse(Overall == 155, 39.978, HTLatitude), HTLongitude = ifelse(Overall == 155, -74.836, HTLongitude))
+draft <- mutate(draft, Conference = ifelse(Overall == 176, "CFL", Conference), AMCity = ifelse(Overall == 176, "Toronto", AMCity), AMState = ifelse(Overall == 176, "ON", AMState), AMLatitude = ifelse(Overall == 176, 43.633, AMLatitude), AMLongitude = ifelse(Overall == 176, -79.419, AMLongitude), HTCity = ifelse(Overall == 176, "Atlanta", HTCity), HTState = ifelse(Overall == 176, "GA", HTState), HTLatitude = ifelse(Overall == 176, 33.749, HTLatitude), HTLongitude = ifelse(Overall == 176, -84.39, HTLongitude))
+draft <- mutate(draft, HTLatitude = ifelse(Overall == 194, 49.694, HTLatitude), HTLongitude = ifelse(Overall == 194, -112.842, HTLongitude))
+draft <- mutate(draft, AMCity = ifelse(Overall == 199, "Cedar Falls", AMCity), AMState = ifelse(Overall == 199, "IA", AMState), AMLatitude = ifelse(Overall == 199, 45.5156, AMLatitude), AMLongitude = ifelse(Overall == 199, -92.4673, AMLongitude))
+draft <- mutate(draft, AMCity = ifelse(Overall == 207, "Findlay", AMCity), AMState = ifelse(Overall == 207, "OH", AMState), AMLatitude = ifelse(Overall == 207, 41.05, AMLatitude), AMLongitude = ifelse(Overall == 207, -83.756, AMLongitude), HTCity = ifelse(Overall == 207, "Indianapolis", HTCity), HTState = ifelse(Overall == 207, "IN", HTState), HTLatitude = ifelse(Overall == 207, 39.769, HTLatitude), HTLongitude = ifelse(Overall == 207, -86.158, HTLongitude))
+draft <- mutate(draft, AMCity = ifelse(Overall == 208, "Durham", AMCity), AMState = ifelse(Overall == 208, "NH", AMState), AMLatitude = ifelse(Overall == 208, 43.139, AMLatitude), AMLongitude = ifelse(Overall == 208, -70.94, AMLongitude), HTLatitude = ifelse(Overall == 208, 40.823, HTLatitude), HTLongitude = ifelse(Overall == 208, -72.664, HTLongitude))
+draft <- mutate(draft, AMCity = ifelse(Overall == 216, "Cape Girardeau", AMCity), AMState = ifelse(Overall == 216, "MO", AMState), AMLatitude = ifelse(Overall == 216, 37.3, AMLatitude), AMLongitude = ifelse(Overall == 216, -89.531, AMLongitude))
+draft <- mutate(draft, College = ifelse(Overall == 221, "NFL Academy", College), Conference = ifelse(Overall == 221, "IPP", Conference), AMCity = ifelse(Overall == 221, "London", AMCity), AMState = ifelse(Overall == 221, "ENG", AMState), AMLatitude = ifelse(Overall == 221, 51.5, AMLatitude), AMLongitude = ifelse(Overall == 221, -.133, AMLongitude), HTCity = ifelse(Overall == 221, "Basingstoke", HTCity), HTState = ifelse(Overall == 221, "ENG", HTState), HTLatitude = ifelse(Overall == 221, 51.2667, HTLatitude), HTLongitude = ifelse(Overall == 221, 1.0876, HTLongitude))
+draft <- mutate(draft, AMCity = ifelse(Overall == 227, "Vermillion", AMCity), AMState = ifelse(Overall == 227, "SD", AMState), AMLatitude = ifelse(Overall == 227, 42.791, AMLatitude), AMLongitude = ifelse(Overall == 227, -96.928, AMLongitude))
+draft <- mutate(draft, College = ifelse(Overall == 232, "East Texas A&M", College), AMCity = ifelse(Overall == 232, "Commerce", AMCity), AMState = ifelse(Overall == 232, "TX", AMState), AMLatitude = ifelse(Overall == 232, 33.246, AMLatitude), AMLongitude = ifelse(Overall == 232, -95.91, AMLongitude), HTCity = ifelse(Overall == 232, "Georgetown", HTCity), HTState = ifelse(Overall == 232, "TX", HTState), HTLatitude = ifelse(Overall == 232, 30.633, HTLatitude), HTLongitude = ifelse(Overall == 232, -97.677, HTLongitude))
+draft <- mutate(draft, AMCity = ifelse(Overall == 239, "Richmond", AMCity), AMState = ifelse(Overall == 239, "KY", AMState), AMLatitude = ifelse(Overall == 239, 37.734, AMLatitude), AMLongitude = ifelse(Overall == 239, -84.297, AMLongitude))
+draft <- mutate(draft, AMCity = ifelse(Overall == 248, "Worcester", AMCity), AMState = ifelse(Overall == 248, "MA", AMState), AMLatitude = ifelse(Overall == 248, 42.242, AMLatitude), AMLongitude = ifelse(Overall == 248, -71.8, AMLongitude))
+filter(draft, if_any(everything(), is.na)) %>% print(width = Inf)
+```
+
+# Analysis of States
+
+Now that the data set has been tidied, we can finally start our analysis on geography's impact on the NFL draft. The first thing to look at is whether teams tend to look within their own states for draft prospects. We will start off by looking at how many players were drafted by teams in the same state as the college they were drafted out of.
+
+```{r}
+filter(draft, NFLState == AMState) %>% print(width = Inf)
+```
+
+As can be seen, only seven players were drafted by teams in the same state as their alma mater. This is certainly surprising as it accounts for under 3% of the 257 draft picks from this year. Furthermore, five of these seven players were drafted in the last two rounds. This could possibly show that geography plays more of an impact in the later rounds of the draft. Another interesting thing to note is that the Cleveland Browns are the only team on this list twice. We will now look at how many players were drafted by teams in the same state as their hometowns.
+
+```{r}
+filter(draft, NFLState == HTState) %>% print(width = Inf)
+```
+
+As can be seen, there are slightly more players on this list with ten. However, this is still under 4% of the 257 draft picks from this year. Unlike the previous list, these players are much more spread out in the draft order with the second round being the only one not on this list. Once again, the Cleveland Browns are the only team to appear on this list twice. This may show that the Browns focus more on nearby players than other teams. However, it is clear that we will not get the full story from just looking at states.
+
+# Creating Distance Variables
+
+While looking at states could be useful, there is more to geography than states. If we really want to get the full picture of how geography impacts the NFL draft, we need to look at the actual distance between NFL teams, alma maters, and hometowns. Therefore, it would be best to make two new columns: AMDistance and HTDistance. These columns will show how far away each player's alma mater and hometown are from the NFL team that drafted them. This information will be calculated using the distGeo function. Since this function returns the result in meters, I will divide by 1609.34 to convert it to miles. I will then rearrange these columns to keep the alma mater and hometown geography columns together.
+
+```{r}
+draft <- draft %>% rowwise() %>% mutate(AMDistance = distGeo(c(NFLLongitude, NFLLatitude), c(AMLongitude, AMLatitude)) / 1609.34, HTDistance = distGeo(c(NFLLongitude, NFLLatitude), c(HTLongitude, HTLatitude)) / 1609.34) %>% ungroup()
+draft <- select(draft, Overall, Round, Pick, Player, Position, Team, NFLCity, NFLState, NFLLatitude, NFLLongitude, College, Conference, AMCity, AMState, AMLatitude, AMLongitude, AMDistance, HTCity, HTState, HTLatitude, HTLongitude, HTDistance)
+draft %>% print(width = Inf)
+```
+
+# Checking the Extremities
+
+Now that the distance variables have been created, it would be a good idea to look at the highest and lowest values of each of these variables. Not only will this give us something interesting to look at, but it will also ensure that everything has been implemented correctly so far. First of all, we will look at the ten players who were drafted by teams closest to their alma maters.
+
+```{r}
+arrange(draft, AMDistance) %>% print(width = Inf)
+```
+
+As can be seen, Brendan Rice has by far the shortest distance between his alma mater and the team who drafted him. In fact, he did not even have to leave Los Angeles County to go from USC to the Los Angeles Chargers. He was drafted in the seventh round which does lend some credibility to the claim that geography may play more of an impact in the later rounds although the rest of this list does not do much to support that claim. Besides Rice, only three other players have a distance from their alma mater to their NFL team of under 100 miles. Once again, the Cleveland Browns appear on this list twice as do the Atlanta Falcons. We will now look to the opposite end of the spectrum at the ten players who were drafted by teams furthest from their alma mater.
+
+```{r}
+arrange(draft, desc(AMDistance)) %>% print(width = Inf)
+```
+
+As can be seen, Travis Clayton has by far the longest distance between his alma mater and the team who drafted him. This makes sense as he actually did not play college football. Instead, his alma mater is listed as the NFL Academy in London. He was the only player in the draft whose alma mater is not in North America, so he would obviously be at the top of this list. Besides Clayton, the rest of the players on this list are players who played for a college on one side of the country before being drafted by a team on the opposite side of the country. These players are spread out in the draft order with the picks ranging from the second round to the seventh round. The Tampa Bay Buccaneers appear on this list three times which makes sense as they are on the east coast and drafted several players from schools on the west coast. We will now look at the ten players who were drafted by teams closest to their hometowns.
+
+```{r}
+arrange(draft, HTDistance) %>% print(width = Inf)
+```
+
+As can be seen, this list has much shorter distances than the one based on alma maters. Nine players on this list have a distance from their hometown to their NFL teams of under 100 miles, and five of them are from a suburb of the city where their NFL team plays. Once again, these players are spread out in the draft order with the last round being the only one not on this list. The fact that the last round is not on here could be evidence against the claim that geography plays more of an impact in later rounds. No team appears on this list more than once, but the Cleveland Browns and Atlanta Falcons each appear again after being on the closest alma maters list twice. Finally, we will look at the the opposite end of the spectrum at the ten players who were drafted by teams furthest from their hometown.
+
+```{r}
+arrange(draft, desc(HTDistance)) %>% print(width = Inf)
+```
+
+As can be seen, Tory Taylor has by far the longest distance between his hometown and the team who drafted him. This makes sense as he is from Australia. It is not surprising that the only Australian player drafted is a punter as many Australian rules football players have transitioned into being punters in American football. Interestingly, he was drafted by the Chicago Bears who were also on top of the previous list. The next six players are also from overseas. The second player is from Nigeria, the next three are from Hawaii, and the sixth is from England. The next player on this list is from Alaska which makes sense as it is separate from the rest of the United States despite not technically being overseas. The last three players on this list are players from the east coast who were drafted by teams on the west coast. As has been a trend in these lists, these players are spread out in the draft order with the first round being the only one not on this list. This could show that the previous theory that geography plays more of an impact in later rounds could be false. The Buffalo Bills are the only team to appear on this list twice which is interesting to note as they were also on top of the furthest alma maters list.
+
+# Linear Models
+
+While looking at the extremities seems to show that geography does not play more of an impact in later rounds, these extremities do not provide conclusive evidence. The best way to test this claim is to use a linear model. We will start by looking at a linear model that predicts how far away a player's alma mater will be from the team that drafts him based on where in the draft the player is picked.
+
+```{r}
+mod <- lm(AMDistance ~ Overall, data = draft)
+grid <- draft %>% data_grid(Overall) %>% add_predictions(mod)
+ggplot(data = draft) + geom_point(mapping = aes(x = Overall, y = AMDistance)) + geom_line(data = grid, aes(x = Overall, y = pred))
+```
+
+As can be seen, the distance between a player's alma mater and the team that drafts him does not change much throughout the draft. The average does seem to get a bit lower later on in the draft, but it is not enough to say there is a definitive correlation. For the most part, it seems to remain rather steady. We will now look at another linear model that predicts how far away a player's hometown will be from the team that drafts him based on where in the draft the player is picked.
+
+```{r}
+mod <- lm(HTDistance ~ Overall, data = draft)
+grid <- draft %>% data_grid(Overall) %>% add_predictions(mod)
+ggplot(data = draft) + geom_point(mapping = aes(x = Overall, y = HTDistance)) + geom_line(data = grid, aes(x = Overall, y = pred))
+```
+
+As can be seen, the trend of this linear model is very similar to the previous one. There is a slight downward trend, but it seems to remain mostly steady. There are more outliers in this plot than the previous one, but these outliers are spread out enough to where they do not seem to affect the trend too much. Based on these two linear models, it is safe to say that geography does not play any more of an impact in the later rounds of the NFL draft than it does in the earlier ones.
+
+# Individual Teams
+
+So far, it does not seem like geography has much of an impact on the NFL draft, but there is still more data to look at. As has been mentioned, it seems some teams may focus more on nearby players than other teams. To see if there is any truth to this, we will calculate the average distances for each team to their players' alma maters and hometowns. We will start off by looking at which teams tend to draft players from the closest colleges.
+
+```{r}
+arrange(summarise(group_by(draft, Team), AMAvg = mean(AMDistance)), AMAvg) %>% print(n = 32)
+```
+
+As can be seen, the Cleveland Browns are at the top of this list. This is not surprising as they appeared multiple times on several of the previous lists. Meanwhile, the Seattle Seahawks are at the bottom of this list. This makes sense as they are the most geographically isolated team in the NFL. In fact, the bottom six teams on this list are all on the west coast. This makes sense as there are far more college football teams in the eastern half of the country than the western half. We will not look at which teams tend to draft players from the closest hometowns.
+
+```{r}
+arrange(summarise(group_by(draft, Team), HTAvg = mean(HTDistance)), HTAvg) %>% print(n = 32)
+```
+
+As can be seen, the Baltimore Ravens are on top of this list just ahead of the Cleveland Browns. This is a bit surprising as they did not appear repeatedly in previous lists like the Cleveland Browns did. However, they were in the top five of the previous list based on alma maters. Meanwhile, the Chicago Bears are at the bottom of this list right behind the Seattle Seahawks. This is even more surprising as they are one of the most centrally located teams in the NFL and were right in the middle of the pack in the previous list based on alma maters. To get a closer look at how these teams end up on the top and bottom of these lists, we will look at them individually.
+
+# Cleveland Browns
+
+```{r}
+filter(draft, Team == "Cleveland") %>% print(width = Inf)
+```
+
+As can be seen, Michael Hall Jr. and Jowon Briggs are both from Ohio and also went to college in Ohio. The Cleveland Browns also drafted Zak Zinter out of Michigan which is actually closer to Cleveland than the two Ohio universities. Myles Harden is the furthest player that the Cleveland Browns drafted based on both metrics as he is from Miami Gardens, FL and played college football at South Dakota. Based on who the Cleveland Browns drafted, it makes sense why they were at or near the top of both lists.
+
+```{r}
+filter(draft, Team == "Cleveland") %>% ggplot() + borders("state") + geom_point(aes(NFLLongitude, NFLLatitude, color = "black")) + geom_point(aes(AMLongitude, AMLatitude, color = "#311D00")) + geom_point(aes(HTLongitude, HTLatitude, color = "#FF3C00")) + coord_quickmap() + scale_color_identity()
+```
+
+# Baltimore Ravens
+
+```{r}
+filter(draft, Team == "Baltimore") %>% print(width = Inf)
+```
+
+As can be seen, the Baltimore Ravens did not draft anyone who is either from Maryland or went to college in Maryland. However, most of the players they drafted were from relatively nearby. The only real outlier is Roger Rosengarten who is from Highlands Ranch, CO and played college football at Washington. Adisa Isaac played college football at Penn State which is the closest alma mater to Baltimore. Meanwhile, Devin Leary is from Sicklerville, NJ which is under 100 miles from Baltimore. Based on who the Baltimore Ravens drafted, it makes sense why they were at or near the top of both lists.
+
+```{r}
+filter(draft, Team == "Baltimore") %>% ggplot() + borders("state") + geom_point(aes(NFLLongitude, NFLLatitude, color = "black")) + geom_point(aes(AMLongitude, AMLatitude, color = "#241773")) + geom_point(aes(HTLongitude, HTLatitude, color = "#9E7C0C")) + coord_quickmap() + scale_color_identity()
+```
+
+# Seattle Seahawks
+
+```{r}
+filter(draft, Team == "Seattle") %>% print(width = Inf)
+```
+
+As can be seen, the Seattle Seahawks did not draft anyone from nearby. Sataoa Laumea is the closest player that the Seattle Seahawks drafted by both metrics as he is from Rialto, CA and played college football at Utah. In fact, he is the only player who is either from or went to college within 1000 miles of Seattle. Christian Haynes played college football for UCONN which is the furthest alma mater from Seattle. Meanwhile, Tyrice Knight is from Lakeland, FL which is about as far from Seattle as you can get in the contiguous United States. Based on who the Seattle Seahawks drafted, it makes sense why they were at or near the bottom of both lists.
+
+```{r}
+filter(draft, Team == "Seattle") %>% ggplot() + borders("state") + geom_point(aes(NFLLongitude, NFLLatitude, color = "black")) + geom_point(aes(AMLongitude, AMLatitude, color = "#002244")) + geom_point(aes(HTLongitude, HTLatitude, color = "#69BE28")) + coord_quickmap() + scale_color_identity()
+```
+
+# Chicago Bears
+
+```{r}
+filter(draft, Team == "Chicago") %>% print(width = Inf)
+```
+
+As can be seen, Tory Taylor is from nearly 10000 miles away from Chicago in Melbourne, Australia. This one player explains why the Chicago Bears were at the bottom of the list based on hometowns while being right in the middle of the pack of the list based on alma maters. In fact, they would actually move all the way up to third on the closest hometowns list if this one player was removed. It also does not help that they only drafted five players, so the one outlier had a much bigger impact on the mean than if they had drafted more. Despite being from the furthest hometown, Taylor is actually from the closest alma mater to Chicago as he played at Iowa. I mentioned earlier that it is not surprising to see a punter from Australia, and it is not surprising to see a punter from Iowa either as Iowa is known for its punters. As mentioned earlier, the Chicago Bears have the unique distinction of drafting the players not only from the furthest hometown but also from the closest hometown as Kiran Amegadjie is from the Chicago suburb of Hinsdale, IL. Meanwhile, both of their first round picks played college football on the west coast as Caleb Williams played at USC while Rome Odunze played at Washington.
+
+```{r}
+filter(draft, Team == "Chicago") %>% ggplot() + borders("state") + geom_point(aes(NFLLongitude, NFLLatitude, color = "black")) + geom_point(aes(AMLongitude, AMLatitude, color = "#0B162A")) + geom_point(aes(HTLongitude, HTLatitude, color = "#C83803")) + coord_quickmap() + scale_color_identity()
+```
+
+# Dallas Cowboys
+
+```{r}
+filter(draft, Team == "Dallas") %>% print(width = Inf)
+```
+
+The last team I want to look at is the Dallas Cowboys simply because they are my favorite team. They were in the top three of the list based on alma maters while being right in the middle of the pack of the list based on hometowns. This disconnect can be explained by Marist Liufau who is from Kalihi, HI. As mentioned earlier, Hawaii is far from the rest of the United States, so a player from there will drag the average down. As can be seen, Tyler Guyton is from Texas and played college football at Oklahoma which is the closest alma mater to Arlington. Meanwhile, Caelen Carson played college football at Wake Forest which is the furthest alma mater from Arlington.
+
+```{r}
+filter(draft, Team == "Dallas") %>% ggplot() + borders("state") + geom_point(aes(NFLLongitude, NFLLatitude, color = "black")) + geom_point(aes(AMLongitude, AMLatitude, color = "#041E42")) + geom_point(aes(HTLongitude, HTLatitude, color = "#869397")) + coord_quickmap() + scale_color_identity()
+```
+
+# Conclusion
+
+While looking at this data has been interesting, we have not been able to prove that geography has much of an impact on the NFL draft. We were able to prove definitively that geography does not play any more of an impact in the later rounds of the NFL draft than the earlier ones. Meanwhile, looking at the individual teams did not provide sufficient evidence that some teams focus more on nearby players than others. To prove this one way or another, we would probably need to look at more drafts. If the same teams ended up near the top and bottom of those lists, then a case could be made that those teams focus more or less on nearby players than others. Looking at previous drafts is beyond the scope of this project, but it would certainly be interesting to look at in the future.
+
+https://collegefootballdata.com/exporter/draft/picks?year=2024
