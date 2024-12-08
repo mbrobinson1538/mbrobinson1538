@@ -1,0 +1,270 @@
+---
+title: "ds3"
+author: "Matthew Robinson"
+output: word_document
+format: html
+editor: visual
+editor_options: 
+  chunk_output_type: inline
+---
+
+```{r}
+library(ggplot2)
+library(tidyverse)
+library(ggstance)
+library(lvplot)
+library(ggbeeswarm)
+library(nycflights13)
+```
+
+# Section 7.3.4
+
+# Exercise 2
+
+Explore the distribution of price. Do you discover anything unusual or surprising?
+
+```{r}
+ggplot(data = diamonds) + geom_histogram(mapping = aes(x = price), binwidth = 10)
+```
+
+This histogram uses a bin width of 10.  As shown in this histogram, there is a gap around the $1500 mark.
+
+```{r}
+ggplot(data = diamonds) + geom_histogram(mapping = aes(x = price), binwidth = 100)
+```
+
+This histogram uses a bin width of 100.  There is still a clear drop around the $1500 mark, but it is not a complete gap. 
+
+```{r}
+ggplot(data = diamonds) + geom_histogram(mapping = aes(x = price), binwidth = 1000)
+```
+
+This histogram uses a bin width of 100.  No drop can be seen in this histogram where there should be one.
+
+# Exercise 3
+
+How many diamonds are 0.99 carat? How many are 1 carat? What do you think is the cause of the difference?
+
+```{r}
+filter(diamonds, carat == .99)
+```
+
+There are only 23 .99 carat diamonds while there 1,558 1 carat diamonds.
+
+```{r}
+filter(diamonds, carat == 1)
+```
+
+It makes sense that there would be many more 1 carat diamonds than .99 carat diamonds because a diamond that close to 1 carat could be rounded up to 1 because it is more marketable.
+
+# Section 7.4.1
+
+# Exercise 1
+
+What happens to missing values in a histogram?
+
+```{r}
+ggplot(data = flights) + geom_histogram(mapping = aes(x = dep_time), binwidth = 30)
+```
+
+Missing values in a histogram are removed because they are outside the scale range of the stat bin function.\
+What happens to missing values in a bar chart?
+
+```{r}
+ggplot(data = flights) + geom_bar(mapping = aes(x = dep_time))
+```
+
+Missing values in a bar chart are removed because they are outside the scale range of stat count function.\
+Why is there a difference?\
+The x axis of a histogram is based on bins while the x axis of a bar chart is based on counts.
+
+# Exercise 2
+
+What does na.rm = TRUE do in mean() and sum()?
+
+```{r}
+mean(flights$dep_time)
+sum(flights$dep_time)
+```
+
+Finding the mean and sum do not work if there are missing values.
+
+```{r}
+mean(flights$dep_time, na.rm = TRUE)
+sum(flights$dep_time, na.rm = TRUE)
+```
+
+The argument "na.rm = TRUE" allows you to find the mean and sum by ignoring the missing values.
+
+# Section 7.5.1.1
+
+# Exercise 4
+
+One problem with boxplots is that they were developed in an era of much smaller datasets and tend to display a prohibitively large number of “outlying values”. One approach to remedy this problem is the letter value plot. Install the lvplot package, and try using geom_lv() to display the distribution of price vs cut. What do you learn? How do you interpret the plots?
+
+```{r}
+ggplot(data = diamonds) + geom_lv(mapping = aes(x = cut, y = price))
+```
+
+Based on this plot, premium diamonds seem to have the largest variation in price while fair diamonds have the smallest variation in price.
+
+# Exercise 5
+
+Compare and contrast geom_violin() with a facetted geom_histogram(), or a coloured geom_freqpoly(). What are the pros and cons of each method?
+
+```{r}
+ggplot(data = diamonds) + geom_violin(mapping = aes(x = price, y = cut))
+```
+
+The geom_violin function gives a good view of how common different prices are for each cut.  However, there is no way to see exact counts.
+
+```{r}
+ggplot(data = diamonds) + geom_histogram(mapping = aes(x = price), binwidth = 100) + facet_grid(cut ~ .)
+```
+
+The geom_histogram with the facet_grid function gives a good view of how many diamonds of each cut fall in different price ranges.  However, it is hard to compare between the cuts.
+
+```{r}
+ggplot(data = diamonds) + geom_freqpoly(mapping = aes(x = price, colour = cut), binwidth = 100)
+```
+
+The geom_freqpoly function gives a good view of how prices compare between different cuts.  However, it can be a bit difficult to read.
+
+# Section 7.5.2.1
+
+# Exercise 2
+
+Use geom_tile() together with dplyr to explore how average flight delays vary by destination and month of year. What makes the plot difficult to read?
+
+```{r}
+filter(flights, dep_delay > 0) %>% count(dest, month) %>%  ggplot(mapping = aes(x = dest, y = month)) + geom_tile(mapping = aes(fill = n))
+```
+
+This plot is difficult to read because you cannot read the destinations on the x axis.\
+How could you improve it?
+
+```{r}
+filter(flights, dep_delay > 0) %>% count(month, dest) %>%  ggplot(mapping = aes(x = month, y = dest)) + geom_tile(mapping = aes(fill = n))
+```
+
+Putting the destinations on the y axis makes it a little easier to read, but it is still not perfect.
+
+# Exercise 3
+
+Why is it slightly better to use aes(x = color, y = cut) rather than aes(x = cut, y = color) in the example above?
+
+```{r}
+diamonds %>% count(cut, color) %>%  ggplot(mapping = aes(x = cut, y = color)) + geom_tile(mapping = aes(fill = n))
+```
+
+It is usually better to have an ordered variable on the y axis.  Color is not an ordered variable, so it would be better to put it on the x axis.
+
+```{r}
+diamonds %>% count(color, cut) %>%  ggplot(mapping = aes(x = color, y = cut)) + geom_tile(mapping = aes(fill = n))
+```
+
+Putting an ordered variable such as cut on the y axis makes it easier to see trends in the data as seen above.
+
+# Section 7.5.3.1
+
+# Exercise 1
+
+Instead of summarising the conditional distribution with a boxplot, you could use a frequency polygon. What do you need to consider when using cut_width() vs cut_number()? How does that impact a visualisation of the 2d distribution of carat and price?
+
+```{r}
+ggplot(data = diamonds) + geom_bin2d(mapping = aes(x = carat, y = price, group = cut_width(carat, .1)))
+```
+
+The cut_width function divides the data into bins of a certain width.  When this is used, the count goes all the way up to around 5000.
+
+```{r}
+ggplot(data = diamonds) + geom_bin2d(mapping = aes(x = carat, y = price, group = cut_number(carat, 20)))
+```
+
+The cut_number function divides the data into bins with the same number of points in each bin.  When this is used, the count only goes up to around 2000.
+
+# Exercise 5
+
+Two dimensional plots reveal outliers that are not visible in one dimensional plots. For example, some points in the plot below have an unusual combination of x and y values, which makes the points outliers even though their x and y values appear normal when examined separately.
+
+```{r}
+ggplot(data = diamonds) + geom_point(mapping = aes(x = x, y = y)) + coord_cartesian(xlim = c(4, 11), ylim = c(4, 11))
+```
+
+Why is a scatterplot a better display than a binned plot for this case?
+
+```{r}
+ggplot(data = diamonds) + geom_bin2d(mapping = aes(x = x, y = y)) + coord_cartesian(xlim = c(4, 11), ylim = c(4, 11))
+```
+
+There is no way to see outliers from a binned plot like there is in a scatterplot.
+
+# Midwest Demographics
+
+This data set contains data on the demographics of each county in five midwestern states: Illinois, Indiana, Michigan, Ohio, and Wisconsin.  The following plot shows the percent of people who are college educated in each county divided by state.
+
+```{r}
+ggplot(data = midwest) + geom_violin(mapping = aes(x = percollege, y = state))
+```
+
+From this data, there are a few observations that can be made.  Wisconsin has the highest average percent with Illinois and Ohio being practically tied for last.  However, Wisconsin does have the lowest floor.  Michigan has the highest ceiling and highest floor while Ohio has the lowest ceiling.  The following table shows the ten counties with the hightest percent of people who are college educated.
+
+```{r}
+select(arrange(midwest, desc(percollege)), county, state, percollege)
+```
+
+Unsurprisingly, all of these counties are either home to or near major universities.  Washtenaw, Dane, Champaign, and Monroe counties are each home to thier state's respective flagship universities.  In fact, Ohio is the only state whose flagship university is not included in this list.  Oakland and Ingham counties are also home to major universities.  Meanwhile, Du Page, Hamilton, Lake, and Ozaukee counties are all suburbs of their state's respective largest cities which are home to several major universities.  To get a closer look at this, we will look at each of these five states individually.
+
+# Illinois
+
+```{r}
+select(arrange(filter(midwest, state == "IL"), desc(percollege)), county, percollege)
+```
+
+As mentioned earlier, Champaign County is home to the University of Illinois.  Sangamon County is also home to a campus of the University of Illinois in Springfield.  Cook County is also home to a campus of the University of Illinois in Chicago along with Chicago State University and several private universities including Northwestern University, DePaul University, and the University of Chicago.  The surrounding counties, including Du Page, Lake and McHenry counties benefit from this large concentration of universities.  Other major universities in counties on this list include Southern Illinois University in Jackson County, Illinois State University in McLean County, Northern Illinois University in DeKalb County, and Western Illinois University in McDonough County.  
+
+![Illinois Counties](illinois3.png)
+
+# Indiana
+
+```{r}
+select(arrange(filter(midwest, state == "IN"), desc(percollege)), county, percollege)
+```
+
+As mentioned earlier, Monroe County is home to Indiana University.  Another major public university in the state is Purdue University in Tippecanoe County.  Allen County is home to campuses for both of these universities in Fort Wayne.  Marion County is also home to campuses for both of these universities in Indianapolis along with several private universities including Butler University and the University of Indianapolis.  The surrounding counties, including Hamilton, Boone, and Hendricks counties, benefit from this large concentration of universities.  Warrick County is a suburb of Evansville which is home to the University of Southern Indiana and the University of Evansville.  The other two counties on this list are home to major private universities with the University of Notre Dame in St. Joseph County and Valparaiso University in Porter County.
+
+![Indiana Counties](indiana3.png)
+
+# Michigan
+
+```{r}
+select(arrange(filter(midwest, state == "MI"), desc(percollege)), county, percollege)
+```
+
+As mentioned earlier, Washtenaw County is home to the University of Michigan.  It is also home to Eastern Michigan University.  Also mentioned earlier were Oakland County, home to Oakland University, and Ingham University, home to Michigan State University.  Livingston County is a suburb of Detroit which is home to Wayne State University and the University of Detroit Mercy.  Other major universities in counties on this list include Northwood University in Midland County, Western Michigan University in Kalamazoo County, Davenport University in Kent County, and Central Michigan University in Isabella County.  Interestingly, Leelanau and Grand Traverse counties are not home to or near any major universities.  The only college in the area is Northwestern Michigan College.
+
+![Michigan Counties](michigan3.png)
+
+# Ohio
+
+```{r}
+select(arrange(filter(midwest, state == "OH"), desc(percollege)), county, percollege)
+```
+
+Franklin County is home to Ohio State University and is the only county home to a flagship university not included in the earlier list.  Cuyahoga County is home to several universities including Cleveland State University and Case Western Reserve University.  The surrounding counties, including Geauga County, benefit from this large concentration of universities.  Hamilton County is also home to several universities including the University of Cincinnati and Xavier University.  Other major universities in counties on this list include Wright State University in Greene County, Ohio Wesleyan University in Delaware County, Ohio University in Athens County, Bowling Green State University in Wood County, the University of Dayton in Montgomery County, and the University of Akron in Summit County.
+
+![Ohio Counties](ohio3.png)
+
+# Wisconsin
+
+```{r}
+select(arrange(filter(midwest, state == "WI"), desc(percollege)), county, percollege)
+```
+
+As mentioned earlier, Dane County is home to the University of Wisconsin.  Milwaukee County is also home to a campus of the University of Wisconsin along with several private universities including Maquette University.  The surrounding counties, including Ozaukee and Waukesha counties, benefit from this large concentration of universities.  St. Croix County borders Pierce County which is home to a campus of the University of Wiscosnin in River Falls while Bayfield County borders Douglas County which is also home to a campus of the University of Wisconsin in Superior.  The rest of the counties on this list are also home to campuses of the University of Wisconsin.
+
+![Wisconsin Counties](wisconsin3.png)
+
+# Conclusion
+
+Based on this data, it is clear that the counties with the highest percentage of people who are college educated are those which are home to or near major universities.  Out of the fifty counties listed, only two of them do not fit this criteria.  This makes sense as most of the people living near a major university are likely to have some affiliation with that university.  While this conclusion is not surprising, it is interesting to see how the data supports it.
