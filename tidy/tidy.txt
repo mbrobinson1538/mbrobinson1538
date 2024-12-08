@@ -1,0 +1,1 @@
+My fourth data science assignment included working some exercises from the textbook and creating my own exercise.  For my exercise, I tidied a data set that included data on all 134 FBS schools.  This was all done using R in RStudio.
