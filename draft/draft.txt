@@ -1,0 +1,1 @@
+For my final project in data science, I analyzed geography's impact on the NFL draft.  This included gathering, tidying, transforming, visualising, and modelling data.  This was all done using R in RStudio.
