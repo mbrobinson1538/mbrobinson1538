@@ -1,0 +1,294 @@
+---
+title: "ds5"
+author: "Matthew Robinson"
+format: html
+editor: visual
+editor_options: 
+  chunk_output_type: inline
+---
+
+```{r}
+library(ggplot2)
+library(tidyverse)
+library(ggstance)
+library(lvplot)
+library(ggbeeswarm)
+library(lubridate)
+library(nycflights13)
+library(maps)
+library(lubridate)
+library(hexbin)
+library(splines)
+library(modelr)
+options(na.action = na.warn)
+```
+
+# Section 23.2.1
+
+# Exercise 1
+
+One downside of the linear model is that it is sensitive to unusual values because the distance incorporates a squared term. Fit a linear model to the simulated data below, and visualise the results. Rerun a few times to generate different simulated datasets. What do you notice about the model?
+
+```{r}
+model1 <- function(a, data) 
+{
+  a[1] + data$x * a[2]
+}
+measure_distance <- function(mod, data) 
+{
+  diff <- data$y - model1(mod, data)
+  sqrt(mean(diff ^ 2))
+}
+sim1a <- tibble(x = rep(1:10, each = 3), y = x * 1.5 + 6 + rt(length(x), df = 2))
+best1 <- optim(c(0, 0), measure_distance, data = sim1a)
+ggplot(sim1a, aes(x, y)) + geom_point(size = 2, colour = "grey30") + geom_abline(intercept = best1$par[1], slope = best1$par[2])
+sim1b <- tibble(x = rep(1:10, each = 3), y = x * 1.5 + 6 + rt(length(x), df = 2))
+best2 <- optim(c(0, 0), measure_distance, data = sim1b)
+ggplot(sim1b, aes(x, y)) + geom_point(size = 2, colour = "grey30") + geom_abline(intercept = best2$par[1], slope = best2$par[2])
+sim1c <- tibble(x = rep(1:10, each = 3), y = x * 1.5 + 6 + rt(length(x), df = 2))
+best3 <- optim(c(0, 0), measure_distance, data = sim1c)
+ggplot(sim1c, aes(x, y)) + geom_point(size = 2, colour = "grey30") + geom_abline(intercept = best3$par[1], slope = best3$par[2])
+```
+
+The models for each simulation seem to be a bit off because they are not resistant to unusual values.
+
+# Exercise 2
+
+One way to make linear models more robust is to use a different distance measure. For example, instead of root-mean-squared distance, you could use mean-absolute distance:
+
+```{r}
+measure_distance <- function(mod, data) 
+{
+  diff <- data$y - model1(mod, data)
+  mean(abs(diff))
+}
+```
+
+Use optim() to fit this model to the simulated data above and compare it to the linear model.
+
+```{r}
+best1 <- optim(c(0, 0), measure_distance, data = sim1a)
+ggplot(sim1a, aes(x, y)) + geom_point(size = 2, colour = "grey30") + geom_abline(intercept = best1$par[1], slope = best1$par[2])
+best2 <- optim(c(0, 0), measure_distance, data = sim1b)
+ggplot(sim1b, aes(x, y)) + geom_point(size = 2, colour = "grey30") + geom_abline(intercept = best2$par[1], slope = best2$par[2])
+best3 <- optim(c(0, 0), measure_distance, data = sim1c)
+ggplot(sim1c, aes(x, y)) + geom_point(size = 2, colour = "grey30") + geom_abline(intercept = best3$par[1], slope = best3$par[2])
+```
+
+These models seem to be more accurate than the previous models and are much more resistant to unusual values.
+
+# Section 23.3.3
+
+# Exercise 1
+
+Instead of using lm() to fit a straight line, you can use loess() to fit a smooth curve. Repeat the process of model fitting, grid generation, predictions, and visualisation on sim1 using loess() instead of lm(). How does the result compare to geom_smooth()?
+
+```{r}
+ggplot(sim1, aes(x, y)) + geom_smooth(method = loess, formula = y ~ x)
+```
+
+The geom_smooth function uses the loess function to create a smooth curve instead of a straight line.
+
+# Exercise 2
+
+add_predictions() is paired with gather_predictions() and spread_predictions(). How do these three functions differ?
+
+```{r}
+sim1_mod <- lm(y ~ x, data = sim1)
+sim1 %>% data_grid(x) %>% add_predictions(sim1_mod)
+sim1 %>% data_grid(x) %>% gather_predictions(sim1_mod)
+sim1 %>% data_grid(x) %>% spread_predictions(sim1_mod)
+```
+
+All three of these function do the same thing by giving a prediction to each x value. The only difference is that the gather_predictions function also specifies what model is used.
+
+# Section 23.4.5
+
+# Exercise 1
+
+What happens if you repeat the analysis of sim2 using a model without an intercept. What happens to the model equation?
+
+```{r}
+mod2 <- lm(y ~ 0 + x, data = sim2)
+grid <- sim2 %>% data_grid(x) %>% add_predictions(mod2)
+ggplot(sim2, aes(x)) + geom_point(aes(y = y)) + geom_point(data = grid, aes(y = pred), colour = "red", size = 4)
+```
+
+A 0 is added to the model equation to use a model without an intercept.\
+What happens to the predictions?
+
+```{r}
+mod2 <- lm(y ~ x, data = sim2)
+grid <- sim2 %>% data_grid(x) %>% add_predictions(mod2)
+ggplot(sim2, aes(x)) + geom_point(aes(y = y)) + geom_point(data = grid, aes(y = pred), colour = "red", size = 4)
+```
+
+Using a model without an intercept for sim2 does not seem to affect the predictions.
+
+# Exercise 4
+
+For sim4, which of mod1 and mod2 is better? I think mod2 does a slightly better job at removing patterns, but it’s pretty subtle. Can you come up with a plot to support my claim?
+
+```{r}
+mod1 <- lm(y ~ x1 + x2, data = sim4)
+mod2 <- lm(y ~ x1 * x2, data = sim4)
+grid <- sim4 %>% data_grid(x1 = seq_range(x1, 5), x2 = seq_range(x2, 5)) %>% gather_predictions(mod1, mod2)
+ggplot(grid, aes(x1, pred, colour = x2, group = x2)) + geom_line() + facet_wrap(~ model)
+ggplot(grid, aes(x2, pred, colour = x1, group = x1)) + geom_line() + facet_wrap(~ model)
+```
+
+The claim that mod2 is better than mod1 is correct because the lines in mod1 always have the same slope while the lines for mod2 have different slopes which is more accurate.
+
+# Section 24.2.3
+
+# Exercise 1
+
+In the plot of lcarat vs. lprice, there are some bright vertical strips. What do they represent?
+
+```{r}
+diamonds2 <- diamonds %>% filter(carat <= 2.5) %>% mutate(lprice = log2(price), lcarat = log2(carat))
+ggplot(diamonds2, aes(lcarat, lprice)) + geom_hex(bins = 50)
+```
+
+These vertical stripes represent the most common combinations of carat and price.
+
+# Exercise 4
+
+Does the final model, mod_diamond2, do a good job of predicting diamond prices? Would you trust it to tell you how much to spend if you were buying a diamond?
+
+```{r}
+mod_diamond2 <- lm(lprice ~ lcarat + color + cut + clarity, data = diamonds2)
+grid <- diamonds2 %>% data_grid(cut, .model = mod_diamond2) %>% add_predictions(mod_diamond2)
+ggplot(grid, aes(cut, pred)) + geom_point()
+```
+
+This model does seem to be accurate because better cuts should have higher prices. I do not think I would completely trust it though as I would want to do my own research.
+
+# Section 24.3.5
+
+# Exercise 1
+
+Use your Google sleuthing skills to brainstorm why there were fewer than expected flights on Jan 20, May 26, and Sep 1. (Hint: they all have the same explanation.) How would these days generalise to another year?
+
+```{r}
+daily <- flights %>% mutate(date = make_date(year, month, day)) %>% group_by(date) %>% summarise(n = n())
+daily <- daily %>% mutate(wday = wday(date, label = TRUE))
+mod <- lm(n ~ wday, data = daily)
+grid <- daily %>% data_grid(wday) %>% add_predictions(mod, "n")
+daily <- daily %>% add_residuals(mod)
+filter(daily, date == "2013-01-20" | date == "2013-05-26" | date == "2013-09-01")
+```
+
+Each of these three dates were the Sundays before holidays. January 20 was the day before MLK Day, May 26 was the day before Memorial Day, and September 1 was the day before Labor Day. Since the dates of these holidays changes each year, these dates would also change.
+
+# Exercise 2
+
+What do the three days with high positive residuals represent? How would these days generalise to another year?
+
+```{r}
+daily %>% slice_max(n = 3, resid)
+```
+
+These are the days that have the most flights above expected. These days are the weekend after Thanksgiving and the Saturday after Christmas. The exact dates would probably change each year based on what date Thanksgiving falls on and what day of the week Christmas falls on.
+
+# Exercise 6
+
+What would you expect the model n \~ wday + ns(date, 5) to look like? Knowing what you know about the data, why would you expect it to be not particularly effective?
+
+```{r}
+mod <- MASS::rlm(n ~ wday * ns(date, 5), data = daily)
+daily %>% data_grid(wday, date = seq_range(date, n = 13)) %>% add_predictions(mod) %>% ggplot(aes(date, pred, colour = wday)) + geom_line() + geom_point()
+```
+
+I expected this to show a strong pattern for Saturdays which turned out to be accurate. However, this model is not very effective because it is hard to differentiate between the weekdays.
+
+# Exercise 8
+
+It’s a little frustrating that Sunday and Saturday are on separate ends of the plot. Write a small function to set the levels of the factor so that the week starts on Monday.
+
+```{r}
+daily %>% mutate(wday = factor(wday, levels = c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"))) %>% data_grid(wday, date = seq_range(date, n = 13)) %>% add_predictions(mod) %>% ggplot(aes(date, pred, colour = wday)) + geom_line() + geom_point()
+```
+
+The mutate and factor functions can be used to move Sunday to the end, so now the week starts on Monday.
+
+# FBS Stadiums
+
+This data set contains data on all NCAA Division 1 Football Bowl Subdivision (FBS) schools during the 2024 college football season. The data set was originally downloaded from collegefootballdata.com as a csv file, and I tidied it up in assignment 4 and uploaded it as a new csv file. The read_csv function is used to transfer this data set into a data frame. The following plot shows all FBS stadiums based on opening date and capacity with a linear model that shows the general trend of how opening date affects capacity.
+
+```{r}
+fbs <- read_csv("fbs2.csv", show_col_types = FALSE)
+mod <- lm(Capacity ~ Opening, data = fbs)
+grid <- fbs %>% data_grid(Opening) %>% add_predictions(mod)
+ggplot(data = fbs) + geom_point(mapping = aes(x = Opening, y = Capacity, color = Color1)) + geom_line(data = grid, aes(x = Opening, y = pred)) + scale_color_identity() 
+```
+
+As can be seen, newer stadiums tend to have smaller capacities than older ones. This makes sense as older stadiums have had time to have several expansions throughout the years. Another factor is that older stadiums usually belong to the schools who have had football the longest and therefore have the largest established fan bases. However, the data is clearly very spread out since FBS stadiums capacities can range anywhere from 10,000 all the way to 110,000. This is partially because Power 5 schools tend to have larger stadiums than Group of 5 schools. To get a closer look at this trend, we will look at Power 5 and Group of 5 schools separately.
+
+# Power 5
+
+The Power 5 schools include those in the ACC, Big 12, Big Ten, Pac-12, SEC, and the independent Notre Dame. The Power 5 is considered to be the highest level of college football, so these schools tend to have larger stadiums. The following plot shows all Power 5 stadiums based on opening date and capacity with a linear model that shows the general trend of how opening date affects capacity.
+
+```{r}
+p5 = filter(fbs, Conference == "ACC" | Conference == "Big 12" | Conference == "Big Ten" | Conference == "Pac-12" | Conference == "SEC" | School == "Notre Dame")
+mod <- lm(Capacity ~ Opening, data = p5)
+grid <- p5 %>% data_grid(Opening) %>% add_predictions(mod)
+ggplot(data = p5) + geom_point(mapping = aes(x = Opening, y = Capacity, color = Color1)) + geom_line(data = grid, aes(x = Opening, y = pred)) + scale_color_identity() 
+```
+
+As can be seen, the Power 5 stadiums follow the general trend of newer stadiums being smaller than older ones. The only notable difference between this plot and the previous plot is that the average capacity is a bit higher. To get a closer look at Power 5 stadiums, we can look at the ten largest and smallest power 5 stadiums.
+
+```{r}
+select(arrange(p5, desc(Capacity)), School, Conference, Stadium, Capacity, Opening)
+```
+
+As shown in the above table, Beaver Stadium is the only one of the ten largest Power 5 stadiums to open since 1930. This makes it a bit of an outlier, but it still opened over 60 years ago. There are some other interesting things that can be seen from this data. First of all, all of these stadiums are in either the Big Ten or SEC. This makes sense as they are the two most prestigious conferences in college football. Speaking of prestige, these are ten of the most prestigious schools in college football. All of them have at least one national championship, and all of them except for UCLA have at least three. Another anomaly with UCLA is that they are the only school on this list that does not play on campus. Their home stadium, the Rose Bowl, is more notably known as the home of the famous bowl game of the same name.
+
+```{r}
+select(arrange(p5, Capacity), School, Conference, Stadium, Capacity, Opening)
+```
+
+As shown in the table above, the ten smallest Power 5 stadiums tend to be a bit newer with three of them opening since 2000 and only three of them opening before 1930. The conference makeup is also very different from the previous list. Vanderbilt is the only SEC school on the list while there are no Big Ten teams on the list. Both Pac-12 schools are on here which makes sense as they are among the least prestigious Power 5 schools and are on the verge of losing Power 5 status. Besides the two Pac-12 schools, the rest of the schools are either recent additions to Power 5 conferences, relatively small private schools, or both in the case of SMU. One thing these stadiums have in common with most of the largest stadiums is that they are all on campus stadiums.
+
+```{R}
+p5 %>% ggplot(aes(Longitude, Latitude, color = Color1, size = Capacity)) + borders("state") + geom_point() + coord_quickmap() + scale_color_identity()
+```
+
+# Group of 5
+
+The Group of 5 schools include those in the American, Conference USA, MAC, MWC, Sun Belt, and the independents UCONN and UMASS. The Group of 5 is considered to be below the Power 5, so these schools tend to have smaller stadiums. The following plot shows all Group of 5 stadiums based on opening date and capacity with a linear model that shows the general trend of how opening date affects capacity.
+
+```{r}
+go5 = filter(fbs, Conference == "American Athletic" | Conference == "Conference USA" | Conference == "Mid-American" | Conference == "Mountain West" | Conference == "Sun Belt East" | Conference == "Sun Belt West" | School == "Massachusetts" | School == "UConn")
+mod <- lm(Capacity ~ Opening, data = go5)
+grid <- go5 %>% data_grid(Opening) %>% add_predictions(mod)
+ggplot(data = go5) + geom_point(mapping = aes(x = Opening, y = Capacity, color = Color1)) + geom_line(data = grid, aes(x = Opening, y = pred)) + scale_color_identity() 
+```
+
+Surprisingly, Group of 5 stadiums do not follow the same trend as the previous two plots. Instead, the capacities of Group of 5 stadiums has remained rather steady throughout the years with newer stadiums actually being slightly larger than older ones. This is certainly an interesting contrast, and it begs the question of why the trend is different. To get a closer look at why this is, we can look at the ten largest and smallest Group of 5 stadiums.
+
+```{r}
+select(arrange(go5, desc(Capacity)), School, Conference, Stadium, Capacity, Opening)
+```
+
+As shown in the table above, the ten largest Group of 5 stadiums are much newer than the ten largest Power 5 stadiums with three of them opening since 2000 and all of them opening since 1950. The reasoning behind this becomes clear with a bit of research. The three largest stadiums on here are all NFL stadiums with all of them opening since 1998. There is no doubt that these three stadiums skew the linear model quite a bit. Memphis and UAB also play in off campus stadiums with UAB having the newest stadium on this list. The on campus stadiums on here are much older by comparison although they are still not as old as the Power 5 stadiums. This makes sense as Group of 5 schools tend to have less established football programs.
+
+```{r}
+select(arrange(go5, Capacity), School, Conference, Stadium, Capacity, Opening)
+```
+
+As shown in the table above, S.B. Ballard Stadium is the only one of the ten smallest Group of 5 stadiums to open before 1965. This makes it a bit of an outlier especially because it is also older than all of the top ten largest Group of 5 stadiums. However, the rest of the stadiums are much newer with four of them opening since 2000. This makes sense as many of these schools are recent additions to the FBS. In fact, the smallest stadium on this list and, by extension, in the entire FBS belongs to Kennesaw State which is currently in its first year in the FBS. The second smallest stadium on this list is a temporary home for Hawaii while they try to build a new Aloha Stadium.
+
+```{r}
+go5 %>% ggplot(aes(Longitude, Latitude, color = Color1, size = Capacity)) + borders("state") + geom_point() + coord_quickmap() + scale_color_identity()
+```
+
+# Conclusion
+
+Based on this data, it is clear that newer FBS stadiums tend to be smaller than older ones. This trend holds true for Power 5 schools, but it is not so for Group of 5 schools. This contrast is the result of a few Group of 5 schools playing in relatively new NFL stadiums which are larger than other Group of 5 stadiums. It would certainly be interesting to see how the data trend would look if all off campus stadiums were removed. While it probably would not make the Group of 5 trend match the overall trend, it would most likely make it a bit closer.
+
+```{r}
+fbs %>% ggplot(aes(Longitude, Latitude, color = Color1, size = Capacity)) + borders("state") + geom_point() + coord_quickmap() + scale_color_identity()
+```
+
+source: https://collegefootballdata.com/exporter/teams/fbs?year=2024
