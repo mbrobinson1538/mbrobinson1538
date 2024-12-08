@@ -1,0 +1,409 @@
+---
+title: "ds4"
+author: "Matthew Robinson"
+format: html
+editor: visual
+editor_options: 
+  chunk_output_type: inline
+---
+
+```{r}
+library(ggplot2)
+library(tidyverse)
+library(ggstance)
+library(lvplot)
+library(ggbeeswarm)
+library(lubridate)
+library(nycflights13)
+library(maps)
+```
+
+# Section 10.5
+
+# Exercise 1
+
+How can you tell if an object is a tibble?
+
+```{r}
+flights
+```
+
+As seen above, a tibble will say that it is a tibble at the top when it is printed.
+
+```{r}
+mtcars
+```
+
+You can tell this is not a tibble because it does not say it is a tibble.
+
+# Exercise 2
+
+Compare and contrast the following operations on a data.frame and equivalent tibble. What is different? Why might the default data frame behaviours cause you frustration?
+
+```{r}
+df <- data.frame(abc = 1, xyz = "a")
+df$x
+df[, "xyz"]
+df[, c("abc", "xyz")]
+```
+
+These operations are performed on a data frame. The first operation incorrectly returns something despite there being no column named x. The second operation returns the correct data but does not specify what row and column it is in. The third operation returns the correct data but does not specify what data type each column is.
+
+```{r}
+df <- tibble(abc = 1, xyz = "a")
+df$x
+df[, "xyz"]
+df[, c("abc", "xyz")]
+```
+
+These operations are performed on a tibble. The first operation correctly points out that there is no column named x. The second operation returns the correct data with the relevant information. The third operation also returns the correct data with the relevant information.
+
+# Exercise 5
+
+What does tibble::enframe() do? When might you use it?
+
+```{r}
+enframe(1:5)
+```
+
+The enframe command converts a vector into a tibble. This can be used if you have data in a vector which you want in a tibble.
+
+# Exercise 6
+
+What option controls how many additional column names are printed at the footer of a tibble?
+
+```{r}
+flights
+```
+
+By default, the flights tibble lists 11 columns in the footer which do not appear in the table.
+
+```{r}
+flights %>% print(width = Inf)
+```
+
+Changing the width parameter changes how many columns are included in the table and, by extension, how many columns are listed in the footer.
+
+# Section 12.2.1
+
+# Exercise 1
+
+Using prose, describe how the variables and observations are organised in each of the sample tables.
+
+```{r}
+table1
+```
+
+Table 1 is the tidy table. Each variable, including country, year, cases, and population, has its own column. Each observation, which is a combination of a country and year, has its own row. Therefore, each value has its own cell.
+
+```{r}
+table2
+```
+
+Table 2 is not tidy. Cases and population form different rows for each combination of a country and year when they should be two separate columns.
+
+```{r}
+table3
+```
+
+Table 3 is not tidy. The rate column includes both cases and population when they should be in separate columns.
+
+```{r}
+table4a
+table4b
+```
+
+These tables are not tidy. Table 4a only includes cases while table 4b only includes population when they should be combined into one table.
+
+# Section 12.3.3
+
+# Exercise 2
+
+Why does this code fail?\
+
+table4a %\>% pivot_longer(c(1999, 2000), names_to = "year", values_to = "cases")\
+#\> Error in `pivot_longer()`:\
+#\> ! Can't subset columns past the end.\
+#\> ℹ Locations 1999 and 2000 don't exist.\
+#\> ℹ There are only 3 columns.\
+
+This code fails because 1999 and 2000 are considered characters instead of integers in the table.
+
+```{r}
+table4a %>% pivot_longer(c("1999", "2000"), names_to = "year", values_to = "cases")
+```
+
+Putting quotation marks around 1999 and 2000 fixes the issue.
+
+# Section 12.4.3
+
+# Exercise 1
+
+What do the extra and fill arguments do in separate()? Experiment with the various options for the following two toy datasets.
+
+```{r}
+tibble(x = c("a,b,c", "d,e,f,g", "h,i,j")) %>% separate(x, c("one", "two", "three"))
+```
+
+This function gives a warning because the second row includes four elements instead of three. Therefore, the last element of that row is dropped.
+
+```{r}
+tibble(x = c("a,b,c", "d,e,f,g", "h,i,j")) %>% separate(x, c("one", "two", "three"), extra = "drop")
+```
+
+Setting extra to "drop" gives the same results as the default settings. However, it removes the warning.
+
+```{r}
+tibble(x = c("a,b,c", "d,e,f,g", "h,i,j")) %>% separate(x, c("one", "two", "three"), extra = "merge")
+```
+
+Setting extra to "merge" puts the last two elements in the second row in the same column. This results in f and g sharing a cell.
+
+```{r}
+tibble(x = c("a,b,c", "d,e", "f,g,i")) %>% separate(x, c("one", "two", "three"))
+```
+
+This function gives a warning because the second row includes two elements instead of three. Therefore, the last element of that row is listed as NA.
+
+```{r}
+tibble(x = c("a,b,c", "d,e", "f,g,i")) %>% separate(x, c("one", "two", "three"), fill = "right")
+```
+
+Setting fill to "right" gives the same results as the default settings. However, it removes the warning.
+
+```{r}
+tibble(x = c("a,b,c", "d,e", "f,g,i")) %>% separate(x, c("one", "two", "three"), fill = "left")
+```
+
+Setting fill to "left" skips the first element in the second row instead of the last one. This results in the element of that row being listed as NA.
+
+# Section 12.6.1
+
+# Exercise 2
+
+What happens if you neglect the mutate() step? (mutate(names_from = stringr::str_replace(key, "newrel", "new_rel")))
+
+```{r}
+who %>% pivot_longer(cols = new_sp_m014:newrel_f65, names_to = "key", values_to = "cases", values_drop_na = TRUE) %>% separate(key, c("new", "var", "sexage")) %>% select(-new, -iso2, -iso3) %>% separate(sexage, c("sex", "age"), sep = 1)
+```
+
+Removing the mutate function gives a warning that several pieces are missing.
+
+```{r}
+who %>% pivot_longer(cols = new_sp_m014:newrel_f65, names_to = "key", values_to = "cases", values_drop_na = TRUE) %>% mutate(key = stringr::str_replace(key, "newrel", "new_rel")) %>% separate(key, c("new", "var", "sexage")) %>% select(-new, -iso2, -iso3) %>% separate(sexage, c("sex", "age"), sep = 1)
+```
+
+Adding the mutate function back in removes this warning.
+
+# Section 13.4.6
+
+# Exercise 2
+
+Add the location of the origin and destination (i.e. the lat and lon) to flights.
+
+```{r}
+flights %>% left_join(airports, c("origin" = "faa")) %>% left_join(airports, c("dest" = "faa"))
+```
+
+Using two left joins to map both "origin" and "dest" to "faa" adds the location of both origin and destination to flights.
+
+# Section 15.4.1
+
+# Exercise 1
+
+```{r}
+arrange(gss_cat, desc(tvhours))
+```
+
+Several people said they watch television 24 hours a day which is clearly not realistic. It would probably be better to use median instead of mean because median mostly ignores these unrealistic numbers.
+
+# Section 15.5.1
+
+# Exercise 2
+
+How could you collapse rincome into a small set of categories?
+
+```{r}
+ggplot(data = gss_cat) + geom_point(mapping = aes(x = year, y = rincome))
+```
+
+The categories "Not applicable", "Refused", "Don't know", and "No answer" all basically mean not applicable.
+
+```{r}
+ggplot(data = gss_cat %>% mutate(rincome = fct_collapse(rincome, na = c("Not applicable", "Refused", "Don't know", "No answer")))) + geom_point(mapping = aes(x = year, y = rincome))
+```
+
+Combining these four categories into one category named "na" makes the data more tidy.
+
+# Section 16.3.4
+
+# Exercise 5
+
+On what day of the week should you leave if you want to minimise the chance of a delay?
+
+```{r}
+make_datetime_100 <- function(year, month, day, time) {make_datetime(year, month, day, time %/% 100, time %% 100)}
+flights_dt <- flights %>% filter(!is.na(dep_time), !is.na(arr_time)) %>% mutate(dep_time = make_datetime_100(year, month, day, dep_time), arr_time = make_datetime_100(year, month, day, arr_time), sched_dep_time = make_datetime_100(year, month, day, sched_dep_time), sched_arr_time = make_datetime_100(year, month, day, sched_arr_time)) %>% select(origin, dest, ends_with("delay"), ends_with("time"))
+filter(flights_dt, dep_delay > 0) %>% mutate(wday = wday(dep_time, label = TRUE)) %>% ggplot(aes(x = wday)) + geom_bar()
+```
+
+If you want to avoid delays, you should leave on Saturday because it has the least amount of delays.
+
+# Section 16.4.5
+
+# Exercise 1
+
+Why is there months() but no dmonths()?
+
+```{r}
+dseconds(1)
+dminutes(1)
+dhours(1)
+ddays(1)
+dweeks(1)
+dyears(1)
+```
+
+Unlike seconds, minutes, hours, days, weeks, and years, months do not have a set length. A month could be anywhere from 28 to 31 days.
+
+# Exercise 2
+
+Explain days(overnight \* 1) to someone who has just started learning R. How does it work?
+
+```{r}
+flights_dt %>% mutate(overnight = arr_time < dep_time, arr_time = arr_time + days(overnight * 1), sched_arr_time = sched_arr_time + days(overnight * 1))
+```
+
+The overnight variable will equal 1 if it is an overnight flight and 0 if it is not an overnight flight. Therefore, the "days(overnight \* 1)" command will return 1 if it is an overnight flight and 0 if it is not an overnight flight. This ensures that a day is added only to overnight flights.
+
+# Exercise 4
+
+Write a function that given your birthday (as a date), returns how old you are in years.
+
+```{r}
+as.duration((today() - dmy(08052002))) %/% dyears(1)
+```
+
+This function correctly returns my age as 22.
+
+# FBS Schools
+
+This data set contains data on all NCAA Division 1 Football Bowl Subdivision (FBS) schools during the 2024 college football season. The data set was downloaded from collegefootballdata.com as a csv file. The read_csv function is used to transfer this data set into a data frame. The following table shows the first ten FBS schools alphabetically.
+
+```{r}
+fbs <- read_csv("fbs1.csv", show_col_types = FALSE)
+fbs %>% print(width = Inf)
+```
+
+When looking at this data, it is clear that it is not tidy. A few things will need to be done to tidy up this data. First of all, you will notice that each school has a unique ID. This ID ties each school into a larger database. Each school's stadium also has a unique ID for the same purpose. Since we are only looking at this data set, it is safe to remove these two columns.
+
+```{r}
+fbs <- select(fbs, -c("Id", "Location Venue Id"))
+fbs %>% print(width = Inf)
+```
+
+Removing this unnecessary data is a good start, but there are still more columns which are not needed. As can be seen, there are three alternate name columns. Most of the cells in these columns are left empty, and most of the data that is in these columns is redundant anyway. Therefore, these columns can also be removed.
+
+```{r}
+fbs <- select(fbs, -c("Alt Name1", "Alt Name2", "Alt Name3"))
+fbs %>% print(width = Inf)
+```
+
+The last couple steps have made the table much more concise, but there are still more columns which can be removed. As can be seen, the logo columns include links to logos for each school. While this information could be useful for some purposes, it takes up a ton of space and does not look good. Since this data is not really useful for our purposes, it is safe to just remove it.
+
+```{r}
+fbs <- select(fbs, -c("Logos[0]", "Logos[1]"))
+fbs %>% print(width = Inf)
+```
+
+Finally, there is one more column that can be removed. There is a country column that says what country every school is in. Since every FBS school is in the US, there is no need to have this column. Therefore, it can be safely removed.
+
+```{r}
+fbs <- select(fbs, -"Location Country Code")
+fbs %>% print(width = Inf)
+```
+
+These are all the columns that can be completely removed. However, there is one more column that could be removed if we move its data elsewhere. As can be seen, the division column is empty for most schools. This is because the Sun Belt is the only conference that still has divisions. There is no need to have this column if it is mostly empty, but the data that is there is still important. Therefore, the best thing to do is to add the data from that column into the conference column.
+
+```{r}
+fbs <- unite(fbs, "Conference", Conference, Division, sep = " ", na.rm = TRUE)
+filter(fbs, Conference == "Sun Belt East" | Conference == "Sun Belt West") %>% print(n = 14, width = Inf)
+```
+
+As seen in the above table, all Sun Belt teams now have their division included in their conference. All of the unnecessary columns have now been removed. However, some of the remaining column names could be improved. First of all, "Location Name" is not a good description for the column which lists each school's stadium. Therefore, it would be best to change the name of that column to "Stadium".
+
+```{r}
+fbs <- rename(fbs, "Stadium" = "Location Name")
+fbs %>% print(width = Inf)
+```
+
+Besides that column, every column after that also includes "Location" at the beginning of its name. Since there is no longer a "Location Name" column, that word does not really fit in the rest of the columns. Those columns do not need that word to describe what they are referring to anyway. Therefore, it would be best to remove that word from those columns.
+
+```{r}
+fbs <- rename_with(fbs, ~str_remove(., "Location "))
+fbs %>% print(width = Inf)
+```
+
+Once this word is removed, there are still two column names left with multiple words and, by extension, quotation marks. The data would look much nicer without those quotation marks, so it would be best to turn those column names into one word. The first column name that needs to be changed is "Alt Color". The best way to change it to one word while still distinguishing it from the "Color" column is to change "Color" to "Color1" and change "Alt Color" to "Color2"
+
+```{r}
+fbs <- rename(fbs, "Color1" = "Color")
+fbs <- rename(fbs, "Color2" = "Alt Color")
+fbs %>% print(width = Inf)
+```
+
+The other column name that needs to be changes is "Year Constructed". While changing the name to one word, it would be best to indicate that this is the year each stadium opened, not when construction on it started. The best way to solve both of these problems would be to rename the "Year Constructed" column to "Opening".
+
+```{r}
+fbs <- rename(fbs, "Opening" = "Year Constructed")
+fbs %>% print(width = Inf)
+```
+
+After this, the columns are now cleaned up how we want them. Now that the columns have been dealt with, it is time to make sure the cell values are in order. First of all, we need to handle any null values. Therefore, we need to get a list of all values of NA in the data, so we can fix them accordingly.
+
+```{r}
+filter(fbs, if_any(everything(), is.na)) %>% print(width = Inf)
+```
+
+As can be seen, there are seven schools who have cell values listed as NA. Affected columns include the timezone, elevation, construction, and grass columns. Since I want this data set to have all relevant information, I will use my own research to fill out each of these cells as accurately as possible.
+
+```{r}
+fbs <- mutate(fbs, Twitter = ifelse(School == "UTSA", "@UTSAFTBL", Twitter))
+fbs <- mutate(fbs, Timezone = ifelse(School == "Hawai'i", "Pacific/Honolulu", Timezone))
+fbs <- mutate(fbs, Timezone = ifelse(School == "Kennesaw State" | School == "Rutgers", "America/New_York", Timezone))
+fbs <- mutate(fbs, Timezone = ifelse(School == "South Alabama" | School == "UAB", "America/Chicago", Timezone))
+fbs <- mutate(fbs, Timezone = ifelse(School == "UNLV", "America/Los_Angeles", Timezone))
+fbs <- mutate(fbs, Elevation = ifelse(School == "Rutgers", 50, Elevation))
+fbs <- mutate(fbs, Elevation = ifelse(School == "South Alabama", 33, Elevation))
+fbs <- mutate(fbs, Elevation = ifelse(School == "UAB", 597, Elevation))
+fbs <- mutate(fbs, Elevation = ifelse(School == "UNLV", 2190, Elevation))
+fbs <- mutate(fbs, Opening = ifelse(School == "Hawai'i", 2015, Opening))
+fbs <- mutate(fbs, Opening = ifelse(School == "Rutgers", 1994, Opening))
+fbs <- mutate(fbs, Opening = ifelse(School == "South Alabama", 2020, Opening))
+fbs <- mutate(fbs, Opening = ifelse(School == "UAB", 2021, Opening))
+fbs <- mutate(fbs, Opening = ifelse(School == "UNLV", 2020, Opening))
+fbs <- mutate(fbs, Grass = ifelse(School == "Kennesaw State", FALSE, Grass))
+filter(fbs, if_any(everything(), is.na)) %>% print(width = Inf)
+```
+
+As seen from the empty tibble, all cells with values of NA have been updated to the most accurate data that could be found. However, there is still one more problem. In the earlier table, UAB's Protective Stadium had a listed capacity of 0. This is clearly not accurate and must be fixed. First of all, we must check to see if any other schools have this problem.
+
+```{r}
+filter(fbs, Capacity == 0) %>% print(width = Inf)
+```
+
+Thankfully, no other schools have this problem, so this will be a pretty simple fix. Protective Stadium has a capacity of 47,100, so we will simply add that value to that cell.
+
+```{r}
+fbs <- mutate(fbs, Capacity = ifelse(School == "UAB", 47100, Capacity))
+filter(fbs, Capacity == 0) %>% print(width = Inf)
+```
+
+As seen from the empty table, this problem has been fixed. With that last fix, this data set is now tidy. Below we can get a look at this tidy data set before writing it into a new csv file. We can also use this data to map every FBS school. This is just the beginning of this data set's usefulness, and it would be interesting to do more with it in the future.
+
+```{r}
+fbs %>% print(width = Inf)
+fbs %>% ggplot(aes(Longitude, Latitude, color = Color1)) + borders("state") + geom_point() + coord_quickmap() + scale_color_identity()
+```
+
+source: https://collegefootballdata.com/exporter/teams/fbs?year=2024
