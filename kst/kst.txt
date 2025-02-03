@@ -1,0 +1,1 @@
+Throughout my Machine Learning class, I worked with a group to write a paper and give a presentation on applying the Kolmogorov Superposition Theorem in neural networks.  We wrote our paper using LaTeX in Overleaf.  Besides helping to write this paper, I also helped with research and presented the last few slides of our presentation.
