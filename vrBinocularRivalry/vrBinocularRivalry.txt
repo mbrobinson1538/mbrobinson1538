@@ -1,0 +1,1 @@
+For my senior project at Mississippi State University, I was on a team that helped design a way to perform binocular rivalry experiments in virtual reality.  This was done using a Meta Quest 2, Unity, and PsychoPy.  My specific role involved researching different strategies we could use and testing and troubleshooting our designs.
